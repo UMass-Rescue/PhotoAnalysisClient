@@ -4,14 +4,14 @@ const DEBUG="debug";
 const DEV="development";
 const PYTHON_APP_NAME = 'main'
 
-const PYTHON_ENTRY= path.join(__dirname, '..','python', PYTHON_APP_NAME + '.py')
+const PYTHON_ENTRY= path.join(__dirname, '..','backend', PYTHON_APP_NAME + '.py')
 
 PROD_ENTRY=""
 if (process.platform === 'win32') {
-  PROD_ENTRY = path.join(__dirname, '..','python_dist',PYTHON_APP_NAME + '.exe')
+  PROD_ENTRY = path.join(__dirname, '..','backend_dist',PYTHON_APP_NAME + '.exe')
 }
 else {
-  PROD_ENTRY = path.join(__dirname, '..','python_dist',PYTHON_APP_NAME)
+  PROD_ENTRY = path.join(__dirname, '..','backend_dist',PYTHON_APP_NAME)
 }
 
 
