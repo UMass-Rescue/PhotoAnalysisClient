@@ -1,0 +1,82 @@
+{
+  "name": "electron-opskit",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./main/index.js",
+  "homepage": ".",
+  "author": "Jagath Jai Kumar",
+  "license": "MIT",
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "concurrently": "^5.2.0",
+    "electron": "^9.1.2",
+    "electron-builder": "^22.8.0",
+    "run-script-os": "^1.1.1"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "ps-tree": "^1.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1"
+  },
+  "scripts": {
+    "start-flask": "run-script-os",
+    "start-flask:default": "export BACKEND_PORT=5000 && python3 python/main.py",
+    "start-flask:windows": "set BACKEND_PORT=5000 && python3 python/main.py",
+    "start-electron": "run-script-os",
+    "start-electron:default": "export DISPLAY=:0.0 && export ELECTRON_START_URL=http://localhost:3000 && electron main",
+    "start-electron:windows": "set DISPLAY=:0.0 && set ELECTRON_START_URL=http://localhost:3000 && electron main",
+    "start-react": "run-script-os",
+    "start-react:default": "export BROWSER=none && react-scripts start",
+    "start-react:windows": "set BROWSER=none && react-scripts start",
+    "debug": "run-script-os",
+    "debug:default": "export ENVIRONMENT=debug && concurrently 'npm run start-react' 'npm run start-flask' 'sleep 5 && npm run start-electron' ",
+    "debug:windows": "set ENVIRONMENT=debug && concurrently 'npm run start-react' 'npm run start-flask' 'sleep 5 && npm run start-electron'",
+    "dev": "run-script-os",
+    "dev:default": "export ENVIRONMENT=development && concurrently 'npm run start-react' 'sleep 5 && npm run start-electron' ",
+    "dev:windows": "set ENVIRONMENT=development && concurrently 'npm run start-react' 'sleep 5 && npm run start-electron'",
+    "prod": "run-script-os",
+    "prod:default": "export ENVIRONMENT=production && npm run start-electron",
+    "prod:windows": "set ENVIRONMENT=production && npm run start-electron",
+    "setup": "npm install && pip3 install -r python/requirements-dev.txt",
+    "build": "react-scripts build",
+    "build-python": "run-script-os",
+    "build-python:default": "virtualenv -p python3 python/venv-app && ./python/venv-app/bin/pip install -r python/requirements.txt && ./python/venv-app/bin/pyinstaller -F ./python/main.py --workpath ./python_build --distpath ./python_dist --specpath ./python_spec",
+    "build-python:windows": "virtualenv -p python3 python\\venv-app && ./python\\venv-app\\bin\\pip install -r python\\requirements.txt && ./python\\venv-app\\bin\\pyinstaller -F ./python/main.py --workpath ./python_build --distpath ./python_dist --specpath ./python_spec",
+    "clean": "run-script-os",
+    "clean:default": "rm -rf python/venv-app python_build python_dist python_spec build dist",
+    "clean:windows": "rmdir python\\venv-app python_build python_dist python_spec build dist",
+    "test": "react-scripts test",
+    "test-python": "pytest",
+    "eject": "react-scripts eject",
+    "package-electron": "npm run clean && npm run build && npm run build-python && electron-builder build -c.extraMetadata.main=main/index.js --publish never"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "build": {
+    "appId": "nonExistentID",
+    "files": [
+      "build/**/*",
+      "main/**/*",
+      "node_modules/**/*",
+      "public/**/*",
+      "python_dist/**/*"
+    ]
+  }
+}
