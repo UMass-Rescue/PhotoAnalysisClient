@@ -12,6 +12,7 @@ function createWindow () {
   startUrl = "";
   if (process.env.ENVIRONMENT == config.DEBUG) {
     startUrl = process.env.ELECTRON_START_URL;
+
   }
   // This part doesn't really work for some reason ...
   else if (process.env.ENVIRONMENT == config.DEV) {
@@ -31,6 +32,10 @@ function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
+
+  if (process.env.ENVIRONMENT == config.DEBUG) {
+    //mainWindow.webContents.openDevTools()
+  }
 
 }
 app.on('ready', () => {
