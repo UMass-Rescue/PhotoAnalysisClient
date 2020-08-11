@@ -2,17 +2,9 @@ import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Divider, Drawer } from '@material-ui/core';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
-import TextFieldsIcon from '@material-ui/icons/TextFields';
-import ImageIcon from '@material-ui/icons/Image';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import SettingsIcon from '@material-ui/icons/Settings';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-
-import { Profile, SidebarNav, UpgradePlan } from './components';
+import { Divider, Drawer, Typography } from '@material-ui/core';
+import {ImportExport, Dashboard } from '@material-ui/icons';
+import { SidebarNav, Profile } from './components';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -23,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   root: {
-    backgroundColor: theme.palette.white,
+    backgroundColor: '#F4F6F8',
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
@@ -42,48 +34,19 @@ const Sidebar = props => {
 
   const classes = useStyles();
 
-  const pages = [
+  const mainApps = [
     {
-      title: 'Dashboard',
-      href: '/dashboard',
-      icon: <DashboardIcon />
+      title: 'Import',
+      href: '/import',
+      icon: <ImportExport />
     },
     {
-      title: 'Users',
-      href: '/users',
-      icon: <PeopleIcon />
-    },
-    {
-      title: 'Products',
-      href: '/products',
-      icon: <ShoppingBasketIcon />
-    },
-    {
-      title: 'Authentication',
-      href: '/sign-in',
-      icon: <LockOpenIcon />
-    },
-    {
-      title: 'Typography',
-      href: '/typography',
-      icon: <TextFieldsIcon />
-    },
-    {
-      title: 'Icons',
-      href: '/icons',
-      icon: <ImageIcon />
-    },
-    {
-      title: 'Account',
-      href: '/account',
-      icon: <AccountBoxIcon />
-    },
-    {
-      title: 'Settings',
-      href: '/settings',
-      icon: <SettingsIcon />
+      title: 'Review',
+      href: '/review',
+      icon: <Dashboard />
     }
   ];
+
 
   return (
     <Drawer
@@ -97,13 +60,13 @@ const Sidebar = props => {
         {...rest}
         className={clsx(classes.root, className)}
       >
-        <Profile />
+      <Profile />
         <Divider className={classes.divider} />
+        <Typography>Data Triage</Typography>
         <SidebarNav
           className={classes.nav}
-          pages={pages}
+          pages={mainApps}
         />
-        <UpgradePlan />
       </div>
     </Drawer>
   );

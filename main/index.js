@@ -10,16 +10,7 @@ let pythonProcess;
 
 function createWindow () {
   startUrl = "";
-  if (process.env.ENVIRONMENT == config.DEBUG) {
-    startUrl = process.env.ELECTRON_START_URL;
-
-  }
-  // This part doesn't really work for some reason ...
-  else if (process.env.ENVIRONMENT == config.DEV) {
-    startUrl = process.env.ELECTRON_START_URL;
-    pythonProcess=childProcess.exec('python3',[config.PYTHON_ENTRY]);
-  }
-  else {  // Production
+  if (process.env.ENVIRONMENT == config.PROD) {
     pythonProcess=childProcess.execFile(config.PROD_ENTRY)
     startUrl = url.format({
       pathname: config.REACT_ENTRY,
@@ -27,14 +18,30 @@ function createWindow () {
       slashes: true,
     });
   }
-  mainWindow = new BrowserWindow({ width: config.WIN_WIDTH, height: config.WIN_HEIGHT, icon:path.join(__dirname, '..','public','icon.png')});
+  // This part doesn't really work for some reason ...
+  else if (process.env.ENVIRONMENT == config.DEV) {
+    startUrl = process.env.ELECTRON_START_URL;
+    pythonProcess=childProcess.exec(config.RUN_METHOD,[config.PYTHON_ENTRY]);
+  }
+  else {  // Production
+    startUrl = process.env.ELECTRON_START_URL;
+  }
+  mainWindow = new BrowserWindow({
+    width: config.WIN_WIDTH,
+    height: config.WIN_HEIGHT,
+    icon:path.join(__dirname,'..','public','icon.png'),
+    webPreferences: {
+      nodeIntegration: true,
+      // devTools: false // for production
+    }
+  });
   mainWindow.loadURL(startUrl);
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
 
   if (process.env.ENVIRONMENT == config.DEBUG) {
-    //mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
   }
 
 }

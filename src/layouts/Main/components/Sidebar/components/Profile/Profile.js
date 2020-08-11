@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Avatar, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+
+import { Auth } from 'api'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -11,10 +12,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     minHeight: 'fit-content'
-  },
-  avatar: {
-    width: 60,
-    height: 60
   },
   name: {
     marginTop: theme.spacing(1)
@@ -27,9 +24,8 @@ const Profile = props => {
   const classes = useStyles();
 
   const user = {
-    name: 'Shen Zhi',
-    avatar: '/images/avatars/avatar_11.png',
-    bio: 'Brain Director'
+    name: Auth.getUser().username,
+    bio: 'User: '
   };
 
   return (
@@ -37,20 +33,14 @@ const Profile = props => {
       {...rest}
       className={clsx(classes.root, className)}
     >
-      <Avatar
-        alt="Person"
-        className={classes.avatar}
-        component={RouterLink}
-        src={user.avatar}
-        to="/settings"
-      />
+    <Typography variant="body2">{user.bio}</Typography>
       <Typography
         className={classes.name}
         variant="h4"
       >
         {user.name}
       </Typography>
-      <Typography variant="body2">{user.bio}</Typography>
+
     </div>
   );
 };

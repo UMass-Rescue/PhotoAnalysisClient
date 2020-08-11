@@ -2,7 +2,12 @@ const path = require('path');
 
 const DEBUG="debug";
 const DEV="development";
-const PYTHON_APP_NAME = 'main'
+const PROD="production";
+
+const RUN_METHOD = 'uvicorn'
+const FASTAPI_APP = 'api:app'
+
+const PYTHON_APP_NAME = 'api'
 
 const PYTHON_ENTRY= path.join(__dirname, '..','backend', PYTHON_APP_NAME + '.py')
 
@@ -17,15 +22,18 @@ else {
 
 const REACT_ENTRY=path.join(__dirname, '..','build', 'index.html')
 
-const WIN_WIDTH=800;
-const WIN_HEIGHT=600;
+const WIN_WIDTH=1600;
+const WIN_HEIGHT=900;
 
 module.exports = {
   DEBUG,
   DEV,
+  PROD,
   PYTHON_ENTRY,
   PROD_ENTRY,
   REACT_ENTRY,
   WIN_WIDTH,
-  WIN_HEIGHT
+  WIN_HEIGHT,
+  FASTAPI_APP,
+  RUN_METHOD
 }
