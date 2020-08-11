@@ -62,25 +62,11 @@ describe('puppeteer', () => {
 
 /********** USEFUL FUNCTIONS  ****************/
 
-var usernamePath = path.join(require('os').homedir(),'.opskit','users','uname');
-var reportsPath = path.join(usernamePath,'reports');
-var exportsPath = path.join(usernamePath, 'exports');
-var customPath = path.join(usernamePath, 'custom');
-
 const sleep = (s) => {
   return new Promise(resolve => setTimeout(resolve, s*1000));
 }
 
-const signin = async (page) => {
-  try {
-    await page.focus('#username');
-    await page.keyboard.type('uname');
-    await page.click('#signin-button');
-  }
-  catch(err){
-    // user probably already signed in
-  }
-};
+
 
 const MaterialSelect = async (page, newSelectedValue, cssSelector) => {
     await page.evaluate((newSelectedValue, cssSelector) => {
@@ -90,36 +76,6 @@ const MaterialSelect = async (page, newSelectedValue, cssSelector) => {
         selectNode.dispatchEvent(clickEvent);
         [...document.querySelectorAll('li')].filter(el => el.innerText == newSelectedValue)[0].click();
     }, newSelectedValue, cssSelector);
-}
-
-
-const resetTesters = () => {
-
-  var folders = fs.readdirSync(reportsPath);
-
-  folders.forEach(function (folder, index) {
-    if (folder.split("_")[0]==='Tester'){
-      rimraf.sync(path.join(reportsPath, folder))
-    }
-  });
-
-  var filesExport = fs.readdirSync(exportsPath);
-
-  filesExport.forEach(function (file, index) {
-    if (file.split("_")[0]==='Tester'){
-      fs.unlinkSync(path.join(exportsPath, file))
-    }
-  });
-}
-
-const resetCustom = () => {
-  var filesCustom = fs.readdirSync(customPath);
-
-  filesCustom.forEach(function (file, index) {
-    if (file.split("_")[0]==='Tester'){
-      fs.unlinkSync(path.join(customPath, file))
-    }
-  });
 }
 
 const checkFileNotEmpty = (type, name) => {
@@ -147,18 +103,10 @@ const checkFileNotEmpty = (type, name) => {
 
 
 
-
-
-var resourceInputs = path.join(__dirname, '..','..','backend','resources','test_input')
-
 module.exports = {
   CONFIG,
   getBrowser,
   getPage,
   sleep,
-  signin,
   MaterialSelect,
-  resourceInputs,
-  checkFileNotEmpty,
-  resetCustom
 }
