@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 
-import { Auth } from 'api'
+import { Auth } from 'api';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +25,7 @@ const Profile = props => {
 
   const user = {
     name: Auth.getUser().username,
-    bio: 'User: '
+    bio: 'Logged In'
   };
 
   return (

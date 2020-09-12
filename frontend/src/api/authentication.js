@@ -3,6 +3,6 @@ const Auth = {
   getUser() {
     return {username:'test'}
   }
-}
+};
 
 module.exports = Auth;

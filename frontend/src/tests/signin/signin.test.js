@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const CONFIG = require('./../config.spec.js')
+const CONFIG = require('../config.spec.js')
 
 var browser = null;
 var page = null;

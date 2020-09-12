@@ -3,18 +3,16 @@ services:
   opskit-frontend:
     stdin_open: true
     build:
-      context: .
+      context: ./frontend/
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - "/app/node_modules"
-      - "./:/app"
+#    volumes:
+#      - "./:/app"
   opskit-backend:
     stdin_open: true
-    command: uvicorn main:app --host 0.0.0.0 --port 5057
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend/
+      dockerfile: Dockerfile
     ports:
       - "5057:5057"

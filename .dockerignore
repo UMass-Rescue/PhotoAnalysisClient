@@ -1,5 +1,5 @@
-node_modules
-build
+frontend/node_modules
+backend/.idea
 .dockerignore
-Dockerfile
-Dockerfile.prod
+frontend/Dockerfile
+backend/Dockerfile
