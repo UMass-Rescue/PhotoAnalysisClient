@@ -19,7 +19,6 @@ COPY package*.json ./
 RUN npm install --silent
 # add app
 COPY ./ ./
-RUN pwd
-RUN ls -al
+
 # start app
 CMD ["npm", "run", "start-react"]
