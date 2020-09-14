@@ -7,15 +7,15 @@ const dropzoneStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: '2em',
-    paddingBottom: '2em',
-    paddingLeft: '8em',
-    paddingRight: '8em',
+    paddingTop: '1em',
+    paddingBottom: '1em',
+    paddingLeft: '20vw',
+    paddingRight: '20vw',
     borderWidth: 2,
     borderRadius: '2em',
     borderColor: '#eeeeee',
-    borderStyle: 'solid',
-    backgroundColor: 'rgba(162, 166, 171, 0.3)',
+    borderStyle: 'dashed',
+    backgroundColor: '#fcfcfc',
     color: '#0D171f',
     outline: 'none',
     transition: 'border .24s ease-in-out'
@@ -30,7 +30,7 @@ function ImageDropzone(props) {
 
     return (
         <div>
-            <Dropzone onDrop={handleFileUpload}>
+            <Dropzone onDrop={handleFileUpload} accept="image/*">
                 {({getRootProps, getInputProps}) => (
                     <div {...getRootProps()} style={dropzoneStyle}>
                         <input {...getInputProps()} />
