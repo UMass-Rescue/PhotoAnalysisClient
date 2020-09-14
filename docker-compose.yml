@@ -19,5 +19,10 @@ services:
     build:
       context: ./backend/
       dockerfile: Dockerfile
+    environment:
+      - GUNICORN_CMD_ARGS=--reload
+    volumes:
+      - "./backend/:/app"
+      - "/app/"
     ports:
       - "5057:5057"
