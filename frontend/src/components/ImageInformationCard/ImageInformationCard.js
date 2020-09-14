@@ -23,22 +23,22 @@ const useStyles = makeStyles({
 });
 
 
-function ImageDisplayCard(props) {
+function ImageInformationCard(props) {
 
     const classes = useStyles();
 
     return (
         <Card className={classes.root}>
             <CardContent>
-                <Typography className={classes.title} style={{color: 'green'}} gutterBottom>
-                    Image Successfully Uploaded
+                <Typography className={classes.title} gutterBottom>
+                    {props.title}
                 </Typography>
                 <Typography variant="h5" component="h2">
-                    {props.title}
+                    {props.description}
                 </Typography>
             </CardContent>
         </Card>
     );
 }
 
-export default ImageDisplayCard;
+export default ImageInformationCard;
