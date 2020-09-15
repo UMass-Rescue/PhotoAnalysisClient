@@ -3,6 +3,7 @@ import axios from 'axios';
 import {makeStyles} from '@material-ui/styles';
 import {Grid, Typography} from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
+import ImageDisplayCard from "../../components/ImageDisplayCard/ImageDisplayCard";
 
 
 const useStyles = makeStyles(theme => ({
@@ -19,7 +20,7 @@ const Review = () => {
     const [imagesProcessed, setImagesProcessed] = useState('n/a');
     const [imagesProcessing, setImagesProcessing] = useState('n/a');
     const [imagesErrored, setImagesErrored] = useState('n/a');
-    const [imageData, setImageData] = useState({'Status': 'Empty'});
+    const [imageData, setImageData] = useState([{'name': 'noData'}]);
 
     useEffect(() => {
         axios.get('http://localhost:5057/images')
@@ -29,10 +30,9 @@ const Review = () => {
                 setImagesProcessing(response.data['imagesProcessing']);
                 setImagesErrored(response.data['imagesErrored']);
                 setImageData(response.data['images']);
-                console.log("Image Data:");
-                console.log(imageData);
             });
     }, []);
+
 
 
 
@@ -60,19 +60,33 @@ const Review = () => {
                     spacing={3}
                 >
                     <Grid item xs={3}>
-                        <ImageInformationCard title={"# Images Uploaded"} description={imagesTotal} />
+                        <ImageInformationCard title={"# Images Uploaded"} description={imagesTotal}/>
                     </Grid>
                     <Grid item xs={3}>
-                        <ImageInformationCard title={"# Images Processed"} description={imagesProcessed} />
+                        <ImageInformationCard title={"# Images Processed"} description={imagesProcessed}/>
                     </Grid>
                     <Grid item xs={3}>
-                        <ImageInformationCard title={"# Images Processing"} description={imagesProcessing} />
+                        <ImageInformationCard title={"# Images Processing"} description={imagesProcessing}/>
                     </Grid>
                     <Grid item xs={3}>
-                        <ImageInformationCard title={"# Images Errored"} description={imagesErrored} />
+                        <ImageInformationCard title={"# Images Errored"} description={imagesErrored}/>
                     </Grid>
                 </Grid>
 
+                <Grid
+                    container
+                    justify="space-evenly"
+                    direction="row"
+                    spacing={3}
+                >
+                {imageData.map((imageObject) => (
+                    <Grid item xs={3}>
+                        {Object.keys(imageObject).map(field => (
+                            <p>{imageObject[field]}</p>
+                        ))}
+                    </Grid>
+                ))}
+                </Grid>
 
             </Grid>
         </div>

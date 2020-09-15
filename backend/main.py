@@ -29,10 +29,10 @@ async def images():
         'imagesProcessed': 20,
         'imagesProcessing': 30,
         'imagesErrored': 40,
-        'images': {
-            'image1': {'dataField1': 256, 'dataField2': 512},
-            'image2': {'dataField1': 300, 'dataField3': 'someImageResult'}
-        }
+        'images': [
+            {'name':'image1','dataField1': 256, 'dataField2': 512},
+            {'name':'image2','dataField1': 300, 'dataField3': 'someImageResult'}
+        ]
     }
 
     return results
