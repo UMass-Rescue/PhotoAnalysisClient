@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import {makeStyles} from '@material-ui/styles';
 import {Grid, Typography} from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
@@ -11,31 +12,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function fetchImageData() {
-    // TODO: API Call Returns # total images
-    // TODO: API Call Returns # Processed images
-    // TODO: API Call Returns # Processing Images
-    // TODO: API Call Returns # Errored Images
-
-    return [ [2], [2], [0], [0],
-        [
-            {
-                name: 'image1',
-                size: 256
-            },
-            {
-                name: 'image2',
-                size: 512
-            }
-        ]
-    ];
-}
-
-
 const Review = () => {
     const classes = useStyles();
 
-    const [imagesTotal, imagesProcessed, imagesProcessing, imagesErrored, imageData] = fetchImageData();
+    const [imagesTotal, setImagesTotal] = useState('n/a');
+    const [imagesProcessed, setImagesProcessed] = useState('n/a');
+    const [imagesProcessing, setImagesProcessing] = useState('n/a');
+    const [imagesErrored, setImagesErrored] = useState('n/a');
+    const [imageData, setImageData] = useState({'Status': 'Empty'});
+
+    useEffect(() => {
+        axios.get('http://localhost:5057/images')
+            .then((response) => {
+                setImagesTotal(response.data['imagesTotal']);
+                setImagesProcessed(response.data['imagesProcessed']);
+                setImagesProcessing(response.data['imagesProcessing']);
+                setImagesErrored(response.data['imagesErrored']);
+                setImageData(response.data['images']);
+                console.log("Image Data:");
+                console.log(imageData);
+            });
+    }, []);
+
 
 
     return (
@@ -74,6 +72,7 @@ const Review = () => {
                         <ImageInformationCard title={"# Images Errored"} description={imagesErrored} />
                     </Grid>
                 </Grid>
+
 
             </Grid>
         </div>
