@@ -1,12 +1,19 @@
-from fastapi import FastAPI
+from typing import List
+
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+import logging
 
 app = FastAPI()
 
+# Must have CORSMiddleware to enable localhost client and server
 origins = [
     "http://localhost",
     "http://localhost:3000",
 ]
+
+logger = logging.getLogger("api")
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,8 +37,8 @@ async def images():
         'imagesProcessing': 30,
         'imagesErrored': 40,
         'images': [
-            {'name':'image1','dataField1': 256, 'dataField2': 512},
-            {'name':'image2','dataField1': 300, 'dataField3': 'someImageResult'}
+            {'name': 'image1', 'dataField1': 256, 'dataField2': 512},
+            {'name': 'image2', 'dataField1': 300, 'dataField3': 'someImageResult'}
         ]
     }
 
@@ -39,8 +46,9 @@ async def images():
 
 
 @app.post("/images")
-async def images():
+async def images(file: UploadFile = File(...)):
+    logger.debug("Filename:" + file.filename)
     # TODO: Take image from request
     # TODO: Run model w/ image
     # TODO: Make processed image available
-    pass
+    return {"filename": file.filename, "filesize": 256}

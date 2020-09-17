@@ -3,7 +3,6 @@ import axios from 'axios';
 import {makeStyles} from '@material-ui/styles';
 import {Grid, Typography} from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
-import ImageDisplayCard from "../../components/ImageDisplayCard/ImageDisplayCard";
 
 
 const useStyles = makeStyles(theme => ({

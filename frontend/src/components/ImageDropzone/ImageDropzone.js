@@ -25,17 +25,17 @@ const dropzoneStyle = {
 function ImageDropzone(props) {
 
     function handleFileUpload(fileList) {
-        props.filelistfunction(fileList.map((fileObject) => fileObject.name));
+        props.filelistfunction(fileList);
     }
 
     return (
         <div>
-            <Dropzone onDrop={handleFileUpload} accept="image/*">
+            <Dropzone onDrop={handleFileUpload} accept="image/*" >
                 {({getRootProps, getInputProps}) => (
                     <div {...getRootProps()} style={dropzoneStyle}>
                         <input {...getInputProps()} />
                         <CloudUploadOutlinedIcon style={{'fontSize': 75}} />
-                        <p>Upload Images</p>
+                        <p>Drop Images Here</p>
                     </div>
                 )}
             </Dropzone>

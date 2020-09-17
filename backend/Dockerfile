@@ -8,4 +8,4 @@ COPY ./ /app
 RUN pip --no-cache-dir install -r requirements.txt
 
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5057", "--debug", "--reload-dir", "/app"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5057", "--debug", "--reload-dir", "/app", "--log-level", "debug"]

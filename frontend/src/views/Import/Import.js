@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
-import {Grid, Typography} from '@material-ui/core';
+import axios from 'axios';
+import {Grid, Typography, Button} from '@material-ui/core';
 import ImageDropzone from "../../components/ImageDropzone/ImageDropzone";
 import ImageDisplayCard from "../../components/ImageDisplayCard/ImageDisplayCard";
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -11,12 +13,34 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-
 const Import = () => {
     const classes = useStyles();
 
     const [filesUploaded, setFilesUploaded] = useState([]);
 
+
+    function uploadImages() {
+
+        function uploadSingleImage(imageFile) {
+            const url = 'http://localhost:5057/images';
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            const config = {
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
+            }
+            axios.post(url, formData, config).then((response) => console.log(response.data));
+        }
+
+
+        if (filesUploaded.length === 0) {
+            alert('You must add files to upload!');
+            return;
+        }
+
+        filesUploaded.map((file) => uploadSingleImage(file));
+    }
 
     return (
         <div className={classes.root}>
@@ -38,7 +62,19 @@ const Import = () => {
                 {/* Display Image Drag-And-Drop Area For Upload  */}
                 <Grid item xs={12}>
                     <ImageDropzone filelistfunction={setFilesUploaded}/>
+                    {/*<form encType="multipart/form-data" method="post" onSubmit={uploadImages} >*/}
+                    {/*    <input id="FormInput" name="files" type="file" multiple style={dropzoneStyle} />*/}
+                    {/*    <Button variant="contained" color="primary" type="submit">*/}
+                    {/*        Upload*/}
+                    {/*    </Button>*/}
+                    {/*</form>*/}
                 </Grid>
+
+                <Grid>
+                    <Button variant="contained" color="primary" type="submit" onClick={uploadImages}>Upload Images</Button>
+                </Grid>
+
+
 
                 {/* Display List of All File Names */}
                 {filesUploaded.length > 0 &&
@@ -70,8 +106,9 @@ const Import = () => {
                             <Grid
                                 item
                                 xs={4}
+                                key={fileName.name}
                             >
-                                <ImageDisplayCard title={fileName}/>
+                                <ImageDisplayCard  title={fileName.name}/>
                             </Grid>
                         ))
                     }
