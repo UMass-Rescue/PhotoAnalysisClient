@@ -23,6 +23,6 @@ services:
       - GUNICORN_CMD_ARGS=--reload
     volumes:
       - "./backend/:/app"
-      - "/app/"
+      # - "/app/"
     ports:
       - "5057:5057"
