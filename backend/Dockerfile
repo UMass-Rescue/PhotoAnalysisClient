@@ -1,9 +1,14 @@
 # Base Image: FastAPI
-FROM tiangolo/uvicorn-gunicorn:python3.8-alpine3.10
+
+## Could not install dependencies for scene_detection with this base image, use the previous version instead
+# FROM tiangolo/uvicorn-gunicorn:python3.8-alpine3.10
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
 WORKDIR /app
 
 COPY ./ /app
+
+RUN pip install --upgrade pip
 
 RUN pip --no-cache-dir install -r requirements.txt
 
