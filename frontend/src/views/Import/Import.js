@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import axios from 'axios';
-import {Grid, Typography, Button} from '@material-ui/core';
+import {Grid, Typography, Button, TextField} from '@material-ui/core';
 import ImageDropzone from "../../components/ImageDropzone/ImageDropzone";
 import ImageDisplayCard from "../../components/ImageDisplayCard/ImageDisplayCard";
 
@@ -17,30 +17,57 @@ const Import = () => {
     const classes = useStyles();
 
     const [filesUploaded, setFilesUploaded] = useState([]);
+    const [keyToCheck, setKeyToCheck] = useState("");
 
+
+    function checkStatus() {
+        let config = {
+            method: 'get',
+            url: (keyToCheck.length === 0) ? 'http://localhost:5000/predict' : 'http://localhost:5000/predict/'+keyToCheck,
+            headers: { }
+        };
+        axios(config).then((response) => console.log(response.data.results));
+    }
 
     function uploadImages() {
 
-        function uploadSingleImage(imageFile) {
-            const url = 'http://localhost:5057/images';
+            const url = 'http://localhost:5000/predict';
             const formData = new FormData();
-            formData.append('file', imageFile);
+            for (let i = 0; i < filesUploaded.length; i++) {
+                formData.append('images', filesUploaded[i]);
+            }
             const config = {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
             }
-            axios.post(url, formData, config).then((response) => console.log(response.data));
-        }
+            axios.post(url, formData, config).then((response) => console.log(response.data.images));
 
-
-        if (filesUploaded.length === 0) {
-            alert('You must add files to upload!');
-            return;
-        }
-
-        filesUploaded.map((file) => uploadSingleImage(file));
+        // function uploadSingleImage(imageFile) {
+        //     const url = 'http://localhost:5057/images';
+        //     const formData = new FormData();
+        //     formData.append('file', imageFile);
+        //     const config = {
+        //         headers: {
+        //             'content-type': 'multipart/form-data'
+        //         }
+        //     }
+        //     axios.post(url, formData, config).then((response) => console.log(response.data));
+        // }
+        //
+        //
+        // if (filesUploaded.length === 0) {
+        //     alert('You must add files to upload!');
+        //     return;
+        // }
+        //
+        // filesUploaded.map((file) => uploadSingleImage(file));
     }
+
+    function updateKey(e) {
+        setKeyToCheck(e.target.value);
+    }
+
 
     return (
         <div className={classes.root}>
@@ -73,7 +100,6 @@ const Import = () => {
                 <Grid>
                     <Button variant="contained" color="primary" type="submit" onClick={uploadImages}>Upload Images</Button>
                 </Grid>
-
 
 
                 {/* Display List of All File Names */}
@@ -115,6 +141,12 @@ const Import = () => {
                 </Grid>
                 }
 
+
+                <br />
+
+                <TextField id="standard-basic" label="Job ID" onChange={updateKey} />
+                <br />
+                <Button variant="contained" color="primary" type="submit" onClick={checkStatus}>Check Result</Button>
 
             </Grid>
         </div>
