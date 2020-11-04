@@ -11,14 +11,17 @@
 ## start app
 #CMD ["npm", "run", "start-react"]
 
-FROM node:alpine
+FROM node:current
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --silent
+# RUN npm uninstall node-sass
+# RUN npm install node-sass@4.14.1
+RUN npm install
 # add app
 COPY ./ ./
 
 # start app
-CMD ["npm", "run", "start-react"]
+CMD ["npm", "run", "start-react:default"]
+# CMD ["react-scripts", "start"]
