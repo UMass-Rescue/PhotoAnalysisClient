@@ -1,6 +1,7 @@
 import React from 'react';
 import Dropzone from "react-dropzone";
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import { Typography } from '@material-ui/core';
 
 const dropzoneStyle = {
     flex: 1,
@@ -35,7 +36,7 @@ function ImageDropzone(props) {
                     <div {...getRootProps()} style={dropzoneStyle}>
                         <input {...getInputProps()} />
                         <CloudUploadOutlinedIcon style={{'fontSize': 75}} />
-                        <p>Select Images</p>
+                        <Typography component='h4'>Select Images</Typography>
                     </div>
                 )}
             </Dropzone>
