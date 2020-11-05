@@ -35,7 +35,7 @@ function ImageDropzone(props) {
                     <div {...getRootProps()} style={dropzoneStyle}>
                         <input {...getInputProps()} />
                         <CloudUploadOutlinedIcon style={{'fontSize': 75}} />
-                        <p>Drop Images Here</p>
+                        <p>Select Images</p>
                     </div>
                 )}
             </Dropzone>

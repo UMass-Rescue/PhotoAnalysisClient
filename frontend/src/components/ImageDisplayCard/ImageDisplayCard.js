@@ -31,7 +31,7 @@ function ImageDisplayCard(props) {
         <Card className={classes.root}>
             <CardContent>
                 <Typography className={classes.title} style={{color: 'green'}} gutterBottom>
-                    Image Added For Upload
+                    Image Added
                 </Typography>
                 <Typography variant="h5" component="h2">
                     {props.title}

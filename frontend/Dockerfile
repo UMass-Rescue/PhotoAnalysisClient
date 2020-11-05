@@ -18,6 +18,7 @@ WORKDIR /app
 COPY package*.json ./
 # RUN npm uninstall node-sass
 # RUN npm install node-sass@4.14.1
+RUN rm -rf package-lock.json node_modules
 RUN npm install
 # add app
 COPY ./ ./
