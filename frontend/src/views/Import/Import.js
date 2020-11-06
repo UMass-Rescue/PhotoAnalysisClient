@@ -124,7 +124,7 @@ const Import = () => {
                                 <FormControlLabel
                                     key={modelName}
                                     control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
-                                    label={modelName.replace('_', ' ')}
+                                    label={modelName.replaceAll('_', ' ')}
                                 />
                             ))}
                         </FormGroup>
