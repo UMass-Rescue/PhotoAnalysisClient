@@ -32,7 +32,6 @@
     "history": "^4.9.0",
     "node-sass": "4.14.1",
     "prop-types": "^15.7.2",
-    "ps-tree": "^1.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.8.6",
     "react-dropzone": "^11.1.0",

@@ -1,12 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/styles';
+import React, {useState, useEffect} from 'react';
+import {makeStyles} from '@material-ui/styles';
 import axios from 'axios';
-import { Grid, Typography, Button, Checkbox, FormGroup, FormControlLabel, Paper, Snackbar } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import {
+    Grid,
+    Typography,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    CardContent
+} from '@material-ui/core';
 import ImageDropzone from "../../components/ImageDropzone/ImageDropzone";
-import ImageDisplayCard from "../../components/ImageDisplayCard/ImageDisplayCard";
-
-
+import Card from "@material-ui/core/Card";
+import Table from "@material-ui/core/Table";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableBody from "@material-ui/core/TableBody";
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import TableHead from "@material-ui/core/TableHead";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import TableContainer from "@material-ui/core/TableContainer";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,13 +36,38 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: '10vw',
         paddingRight: '10vw',
         marginBottom: '1em',
-    }
+    },
+    modelSelectorContainer: {
+        width: '100%',
+        height: '50vh',
+        borderRadius: '0.6em',
+    },
+    modelSelectorTable: {
+        width: '100%',
+        maxHeight: '100%',
+    },
+    imageListContainer: {
+        width: '100%',
+        height: '50vh',
+        borderRadius: '0.6em',
+    },
+    imageListTable: {
+        overflow: 'auto',
+        maxHeight: '40vh',
+    },
+    uploadButtonContainer: {
+        width: '100%',
+        height: '10vh',
+        marginTop: '1vh',
+        borderRadius: '0.6em',
+    },
 }));
 
 const Import = () => {
     const classes = useStyles();
 
-    const [filesUploaded, setFilesUploaded] = useState([]); // Files to be uploaded to photoanalysisserver
+    const [filesToUpload, setFilesToUpload] = useState([]); // Files to be uploaded to photoanalysisserver
+    const [filesUploaded, setFilesUploaded] = useState([]); // Files successfully uploaded to server
     const [modelsAvailable, setModelsAvailable] = useState([]);  // Models available from the photoanalysisserver
     const [modelsToUse, setModelsToUse] = useState([]);  // Models for the photoanalysisserver to use on uploads
     const [open, setOpen] = useState(false); // Handles state of image upload snackbar
@@ -60,133 +99,166 @@ const Import = () => {
     function uploadImages() {
 
         const url = 'http://localhost:5000/predict';
-        const formData = new FormData();
-        for (let i = 0; i < filesUploaded.length; i++) {
-            formData.append('images', filesUploaded[i]);
-        }
-        for (let i = 0; i < modelsToUse.length; i++) {
-            formData.append('models', modelsToUse[i]);
-        }
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data'
+        let currIndex = 0;
+        while (currIndex < filesToUpload.length) {
+            for (let imageCount = 0; imageCount < 3; imageCount++) {
+
+                const formData = new FormData();
+                let fileNames = [];
+                let currPlus3 = currIndex + 3;
+                for (currIndex; currIndex < currPlus3; currIndex++) {
+                    if (currIndex >= filesToUpload.length) {
+                        break;
+                    }
+                    formData.append('images', filesToUpload[currIndex]);
+                    fileNames.push(filesToUpload[currIndex].name);
+                }
+                for (let i = 0; i < modelsToUse.length; i++) {
+                    formData.append('models', modelsToUse[i]);
+                }
+                const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+                axios.post(url, formData, config).then((response) => {
+                    setOpen(true); // Display success message
+                    setFilesUploaded(curr => [...curr, ...fileNames]);
+                    console.log('Updating!!');
+                    let storedImageHashes = JSON.parse(localStorage.getItem('images')) || [];
+                    let combinedImageHashes = storedImageHashes.concat(response.data.images);
+                    let newImageHashes = combinedImageHashes.filter((item, i, ar) => ar.indexOf(item) === i);
+                    localStorage.setItem('images', JSON.stringify(newImageHashes));
+                });
             }
+            console.log(filesUploaded);
+
         }
-        axios.post(url, formData, config).then((response) => {
-            setFilesUploaded([]); // Clear file list
-            setOpen(true); // Display success message
-
-            // Correctly Update Locally Stored Image Hashes
-            let storedImageHashes = JSON.parse(localStorage.getItem('images')) || [];
-            let combinedImageHashes = storedImageHashes.concat(response.data.images);
-            let newImageHashes = combinedImageHashes.filter((item, i, ar) => ar.indexOf(item) === i);
-            localStorage.setItem('images', JSON.stringify(newImageHashes));
-        });
-
     }
 
     const handleSnackbarClose = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setOpen(false);
-      };
+    };
 
 
     return (
         <div className={classes.root}>
-            <Grid
-                container
-                spacing={4}
-                direction="column"
-                alignItems="center"
-                justify="center"
-            >
 
-                {/* Page Title  */}
-                <Grid item xs={12}>
-                    <Typography variant="h3" mt={5}>
-                        Import Images for Processing
-                    </Typography>
-                </Grid>
+            <ImageDropzone filelistfunction={setFilesToUpload}/>
 
-                {/* Display Image Drag-And-Drop Area For Upload  */}
-                <Grid item xs={12}>
-                    <ImageDropzone filelistfunction={setFilesUploaded} />
-                </Grid>
+            <div style={{marginTop: '1em'}}>
+                <Grid
+                    container
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
+                    justify="center"
+                >
 
-                <Paper elevation={1} className={classes.modelSelectorCard}>
-                    {modelsAvailable.length > 0 &&
-                        <FormGroup row={false}>
-                            <Typography variant="h4"><strong>Select Models</strong></Typography>
-                            {modelsAvailable.map((modelName) => (
-                                <FormControlLabel
-                                    key={modelName}
-                                    control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
-                                    label={modelName.replaceAll('_', ' ')}
-                                />
-                            ))}
-                        </FormGroup>
-                    }
-                    {modelsAvailable.length === 0 &&
-                        <Typography type='h4' color='error'><strong>No Models Available</strong></Typography>
-                    }
-                </Paper>
+                    <Grid item xs={4}>
+                        <Card className={classes.modelSelectorContainer}>
+                            <CardContent>
+                                <Typography variant="h5" style={{marginBottom: '1em'}} >
+                                    Choose Models For Processing
+                                </Typography>
 
-                <Grid>
-                    <Button variant="contained" color="primary" type="submit" onClick={uploadImages} disabled={filesUploaded.length === 0 || modelsToUse.length === 0}>Upload Images for Processing</Button>
-                </Grid>
+                                <Table className={classes.modelSelectorTable} aria-label="simple table">
+                                    <TableBody>
+                                        {modelsAvailable.map( (modelName) => (
+                                            <TableRow key={modelName}>
+                                                <TableCell component="th" scope="row">
+                                                    {modelName.replaceAll('_', ' ')}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <FormControlLabel
+                                                        control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
+                                                        label={''}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
 
-                <br />
-
-                {/* Display List of All File Names */}
-                {filesUploaded.length > 0 &&
-                    <Grid
-                        container
-                        justify="space-evenly"
-
-                        direction="row"
-                        spacing={3}
-                    >
-                        <Grid
-                            container
-                            spacing={4}
-                            direction="column"
-                            alignItems="center"
-                            justify="center"
-                        >
-
-
-                            <Typography variant="h4" style={{ marginTop: '2.5em', marginBottom: '1em', borderTop: '0.1em solid black', padding: '1.5em' }}>
-                                Image Upload Results
-                            </Typography>
-
-                        </Grid>
-
-                        {
-                            filesUploaded.map((fileName) => (
-                                <Grid
-                                    item
-                                    xs={4}
-                                    key={fileName.name}
-                                >
-                                    <ImageDisplayCard title={fileName.name} />
-                                </Grid>
-                            ))
-                        }
+                            </CardContent>
+                        </Card >
                     </Grid>
 
-                }
+
+
+
+                    <Grid item xs={4}>
+                        <Card className={classes.uploadButtonContainer}>
+                            <CardContent>
+                                <Button
+                                    variant="contained" color="primary" type="submit"
+                                    onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
+                                    style={{marginLeft: '40%', width: '20%'}}
+                                >
+                                    Upload
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+
+
+
+
+                    <Grid item xs={4}>
+                        <Card  className={classes.imageListContainer}>
+                            <CardContent>
+                                <Typography variant="h5" style={{marginBottom: '1em'}}>
+                                    Images
+                                </Typography>
+
+                                <TableContainer className={classes.imageListTable}>
+                                    <Table stickyHeader aria-label="sticky table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Filename</TableCell>
+                                                <TableCell>Upload Status</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {filesToUpload.map( (fileObject) => (
+                                                <TableRow key={fileObject.name}>
+                                                    <TableCell component="th" scope="row">
+                                                        {fileObject.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {(filesUploaded.includes(fileObject.name) &&
+                                                            <CheckCircleOutlineIcon />
+                                                        ) ||
+                                                            <RemoveCircleOutlineIcon />
+                                                        }
+
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+
+
+                </Grid>
 
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
                     <Alert onClose={handleSnackbarClose} severity="success">
-                        <Typography variant="h5" component="h4">Images Successfully Uploaded For Processing</Typography>
+                        <Typography variant="h5" component="h4">Images Successfully Uploaded</Typography>
                     </Alert>
                 </Snackbar>
 
-
-            </Grid>
+            </div>
+            
         </div>
     );
 };
