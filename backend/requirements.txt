@@ -1,5 +1,0 @@
-fastapi
-pyinstaller
-setuptools
-uvicorn
-python-multipart
