@@ -21,6 +21,7 @@ import TableHead from "@material-ui/core/TableHead";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import TableContainer from "@material-ui/core/TableContainer";
+import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,21 +40,21 @@ const useStyles = makeStyles(theme => ({
     },
     modelSelectorContainer: {
         width: '100%',
-        height: '65vh',
+        height: '55vh',
         borderRadius: '0.6em',
     },
     modelSelectorTable: {
-        width: '100%',
-        maxHeight: '100%',
+        overflow: 'auto',
+        maxHeight: '45vh',
     },
     imageListContainer: {
         width: '100%',
-        height: '65vh',
+        height: '55vh',
         borderRadius: '0.6em',
     },
     imageListTable: {
         overflow: 'auto',
-        maxHeight: '40vh',
+        maxHeight: '45vh',
     },
     uploadButtonContainer: {
         width: '100%',
@@ -61,6 +62,9 @@ const useStyles = makeStyles(theme => ({
         paddingTop: '2vh',
         borderRadius: '0.6em',
     },
+    headerGridCard: {
+        height: '6vh',
+    }
 }));
 
 const Import = () => {
@@ -159,66 +163,52 @@ const Import = () => {
                 <Grid
                     container
                     spacing={2}
-                    direction="row"
-                    alignItems="center"
+                    display="flex"
                     justify="center"
                 >
 
-                    <Grid item xs={4}>
-                        <Card className={classes.modelSelectorContainer}>
-                            <CardContent>
-                                <Typography variant="h5" style={{marginBottom: '1em'}} >
-                                    Choose Models For Processing
-                                </Typography>
-
-                                <Table className={classes.modelSelectorTable} aria-label="simple table">
-                                    <TableBody>
-                                        {modelsAvailable.map( (modelName) => (
-                                            <TableRow key={modelName}>
-                                                <TableCell component="th" scope="row">
-                                                    {modelName.replaceAll('_', ' ')}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <FormControlLabel
-                                                        control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
-                                                        label={''}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-
-                            </CardContent>
-                        </Card >
+                    {/*Header Card: Images*/}
+                    <Grid item md={4} >
+                        <Box display={{ xs: "none", lg: "block" }}>
+                            <Card className={classes.headerGridCard}>
+                                <CardContent>
+                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                        1. Add Images
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Box>
                     </Grid>
 
-
-
-
-                    <Grid item xs={4}>
-                        <Card className={classes.uploadButtonContainer}>
-
-
-
-                            <CardContent>
-                                <Button
-                                    variant="contained" color="primary" type="submit"
-                                    onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
-                                    style={{marginLeft: '30%', width: '40%'}}
-                                >
-                                    Upload Images
-                                </Button>
-                            </CardContent>
-                        </Card>
+                    {/*Header Card: Models*/}
+                    <Grid item md={4} >
+                        <Box display={{ xs: "none", lg: "block" }}>
+                            <Card className={classes.headerGridCard}>
+                                <CardContent>
+                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                        2. Choose Models
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Box>
                     </Grid>
 
+                    {/*Header Card: Upload*/}
+                    <Grid item md={4} >
+                        <Box display={{ xs: "none", lg: "block" }}>
+                            <Card className={classes.headerGridCard}>
+                                <CardContent>
+                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                        3. Upload for Processing
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Box>
+                    </Grid>
 
-
-
-
-                    <Grid item xs={4}>
-                        <Card  className={classes.imageListContainer}>
+                    {/*Review Images*/}
+                    <Grid item md={4}>
+                        <Card className={classes.imageListContainer}>
                             <CardContent>
                                 <Typography variant="h5" style={{marginBottom: '1em'}}>
                                     Images
@@ -242,7 +232,7 @@ const Import = () => {
                                                         {(filesUploaded.includes(fileObject.name) &&
                                                             <CheckCircleOutlineIcon />
                                                         ) ||
-                                                            <RemoveIcon />
+                                                        <RemoveIcon />
                                                         }
 
                                                     </TableCell>
@@ -255,6 +245,59 @@ const Import = () => {
                         </Card>
                     </Grid>
 
+                    {/*Select Models*/}
+                    <Grid item md={4}>
+                        <Card className={classes.modelSelectorContainer}>
+                            <CardContent>
+                                <Typography variant="h5" style={{marginBottom: '1em'}} >
+                                    Choose Models For Processing
+                                </Typography>
+
+                                <Table className={classes.modelSelectorTable} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Model</TableCell>
+                                            <TableCell>Selected</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {modelsAvailable.map( (modelName) => (
+                                            <TableRow key={modelName}>
+                                                <TableCell component="th" scope="row">
+                                                    {modelName.replaceAll('_', ' ')}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <FormControlLabel
+                                                        control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
+                                                        label={''}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+
+                            </CardContent>
+                        </Card >
+                    </Grid>
+
+                    {/* Upload Images*/}
+                    <Grid item md={4}>
+                        <Card className={classes.uploadButtonContainer}>
+
+
+
+                            <CardContent>
+                                <Button
+                                    variant="contained" color="primary" type="submit"
+                                    onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
+                                    style={{marginLeft: '30%', width: '40%'}}
+                                >
+                                    Upload Images
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
 
                 </Grid>
