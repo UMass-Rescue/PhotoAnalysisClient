@@ -253,7 +253,7 @@ const Import = () => {
                                     Choose Models For Processing
                                 </Typography>
 
-                                <Table className={classes.modelSelectorTable} aria-label="simple table">
+                                <Table className={classes.modelSelectorTable} stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Model</TableCell>
