@@ -16,7 +16,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import RemoveIcon from '@material-ui/icons/Remove';
 import TableHead from "@material-ui/core/TableHead";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     },
     modelSelectorContainer: {
         width: '100%',
-        height: '50vh',
+        height: '65vh',
         borderRadius: '0.6em',
     },
     modelSelectorTable: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     },
     imageListContainer: {
         width: '100%',
-        height: '50vh',
+        height: '65vh',
         borderRadius: '0.6em',
     },
     imageListTable: {
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     uploadButtonContainer: {
         width: '100%',
         height: '10vh',
-        marginTop: '1vh',
+        paddingTop: '2vh',
         borderRadius: '0.6em',
     },
 }));
@@ -81,6 +81,11 @@ const Import = () => {
                 console.log('Unable to connect to server or no models available.');
             });
     }, []);
+
+
+    function addFilesToUpload(files) {
+        setFilesToUpload([...filesToUpload, ...files]);
+    }
 
 
     function toggleAddModelToUse(modelName) {
@@ -148,7 +153,7 @@ const Import = () => {
     return (
         <div className={classes.root}>
 
-            <ImageDropzone filelistfunction={setFilesToUpload}/>
+            <ImageDropzone filelistfunction={addFilesToUpload}/>
 
             <div style={{marginTop: '1em'}}>
                 <Grid
@@ -193,13 +198,16 @@ const Import = () => {
 
                     <Grid item xs={4}>
                         <Card className={classes.uploadButtonContainer}>
+
+
+
                             <CardContent>
                                 <Button
                                     variant="contained" color="primary" type="submit"
                                     onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
-                                    style={{marginLeft: '40%', width: '20%'}}
+                                    style={{marginLeft: '30%', width: '40%'}}
                                 >
-                                    Upload
+                                    Upload Images
                                 </Button>
                             </CardContent>
                         </Card>
@@ -234,7 +242,7 @@ const Import = () => {
                                                         {(filesUploaded.includes(fileObject.name) &&
                                                             <CheckCircleOutlineIcon />
                                                         ) ||
-                                                            <RemoveCircleOutlineIcon />
+                                                            <RemoveIcon />
                                                         }
 
                                                     </TableCell>
