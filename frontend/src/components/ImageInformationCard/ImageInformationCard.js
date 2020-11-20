@@ -5,6 +5,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import ExampleModel from '../../components/Models/ExampleModel';
 import ExampleModel2 from 'components/Models/ExampleModel2';
+import AgePredict from 'components/Models/ExampleModel2';
+import { Button } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -30,18 +32,14 @@ function ImageInformationCard(props) {
 
     const classes = useStyles();
 
+
+
     return (
         <Card className={classes.root}>
             <CardContent>
                 <Typography className={classes.title} gutterBottom>
                     {props.title}
                 </Typography>
-                    {props.example_model && 
-                    <ExampleModel data={props.example_model} />
-                    }
-                    {props.example_model2 && 
-                    <ExampleModel2 data={props.example_model2} />
-                    }
                     <Typography variant="h5">{props.description}</Typography>
             </CardContent>
         </Card>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {makeStyles} from '@material-ui/styles';
-import {CardContent, Grid, Input, Typography} from '@material-ui/core';
+import {CardContent, Grid, Typography} from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
@@ -129,23 +129,6 @@ const Review = () => {
                         </TableContainer>
                     </Grid>
                 </Grid>
-
-
-                {/*<Grid*/}
-                {/*    container*/}
-                {/*    justify="left"*/}
-                {/*    direction="row"*/}
-                {/*    spacing={4}*/}
-                {/*>*/}
-
-                {/*{Object.keys(imageData).map((key, index) => (*/}
-                {/*    <Grid item xs={3} key={key}>*/}
-                {/*        <ImageInformationCard title={key} {...imageData[key]} />*/}
-                {/*    </Grid>*/}
-                {/*))}*/}
-
-                {/*</Grid>*/}
-
             </Grid>
         </div>
     );
