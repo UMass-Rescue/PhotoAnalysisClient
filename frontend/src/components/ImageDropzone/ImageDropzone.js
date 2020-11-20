@@ -1,28 +1,37 @@
 import React from 'react';
 import Dropzone from "react-dropzone";
-import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const dropzoneStyle = {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: '1em',
-    paddingBottom: '1em',
-    paddingLeft: '20vw',
-    paddingRight: '20vw',
-    borderWidth: 2,
-    borderRadius: '2em',
-    borderColor: '#eeeeee',
+    borderWidth: 3,
     borderStyle: 'dashed',
-    backgroundColor: '#fcfcfc',
-    color: '#0D171f',
-    outline: 'none',
-    transition: 'border .24s ease-in-out'
+    borderRadius: '0.5em',
+    paddingTop: '3vh',
+    paddingBottom: '3vh',
+    paddingLeft: '15vw',
+    paddingRight: '15vw',
+    borderColor: '#2688DD'
 };
 
 
 function ImageDropzone(props) {
+
+    const uploadFontTheme = createMuiTheme({
+        typography: {
+            "fontFamily": 'Recursive, sans-serif',
+            "fontSize": 12,
+            "color": '#2688DD',
+            "fontWeightLight": 300,
+            "fontWeightRegular": 400,
+            "fontWeightMedium": 500
+        }
+    });
+
 
     function handleFileUpload(fileList) {
         props.filelistfunction(fileList);
@@ -30,12 +39,19 @@ function ImageDropzone(props) {
 
     return (
         <div>
-            <Dropzone onDrop={handleFileUpload} accept="image/*" >
+            <Dropzone onDrop={handleFileUpload} accept="image/*">
                 {({getRootProps, getInputProps}) => (
                     <div {...getRootProps()} style={dropzoneStyle}>
                         <input {...getInputProps()} />
-                        <CloudUploadOutlinedIcon style={{'fontSize': 75}} />
-                        <p>Drop Images Here</p>
+                        <ThemeProvider theme={uploadFontTheme}>
+                            <Typography variant='h4'>
+                                Drop Images Here
+                                <br />
+                                or
+                                <br/>
+                                Click to Upload
+                            </Typography>
+                        </ThemeProvider>
                     </div>
                 )}
             </Dropzone>

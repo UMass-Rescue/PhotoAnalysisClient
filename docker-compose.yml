@@ -1,28 +1,15 @@
 version: "3.8"
 services:
-  opskit-frontend:
-    stdin_open: true
-    container_name: opskit-frontend
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - "./frontend/:/app"
-      - "/app/node_modules"
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-  opskit-backend:
-    stdin_open: true
-    container_name: opskit-backend
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
-    environment:
-      - GUNICORN_CMD_ARGS=--reload
-    volumes:
-      - "./backend/:/app"
-      # - "/app/"
-    ports:
-      - "5057:5057"
+   opskit-frontend:
+     stdin_open: true
+     container_name: opskit-frontend
+     build:
+       context: ./frontend/
+       dockerfile: Dockerfile
+     ports:
+       - "3000:3000"
+     volumes:
+       - "./frontend/:/app"
+       - "./frontend/node_modules:/app/node_modules"
+     environment:
+       - CHOKIDAR_USEPOLLING=true

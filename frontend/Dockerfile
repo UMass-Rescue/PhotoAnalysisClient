@@ -1,24 +1,12 @@
-## Base image: Node
-#FROM node:alpine
-#
-#WORKDIR /app
-#
-#COPY package*.json ./
-#RUN npm install --silent
-#
-#COPY . ./
-#
-## start app
-#CMD ["npm", "run", "start-react"]
-
-FROM node:alpine
+FROM node:current
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --silent
+RUN npm install
 # add app
 COPY ./ ./
 
 # start app
-CMD ["npm", "run", "start-react"]
+CMD ["npm", "run", "start-react:default"]
+# CMD ["npm", "run", "start-react:default"]
