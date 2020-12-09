@@ -78,7 +78,7 @@ const Import = () => {
 
 
     useEffect(() => {
-        axios.get('http://localhost:5000/models')
+        axios.get('http://localhost:5000/model/list')
             .then((response) => {
                 setModelsAvailable(response.data['models']);
             }, (error) => {
@@ -164,7 +164,6 @@ const Import = () => {
                     container
                     spacing={2}
                     display="flex"
-                    justify="center"
                 >
 
                     {/*Header Card: Images*/}

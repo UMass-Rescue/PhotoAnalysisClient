@@ -24,7 +24,7 @@ const Profile = props => {
   const classes = useStyles();
 
   const user = {
-    name: Auth.getUser().username,
+    name: Auth.getUsername(),
     bio: 'Logged In'
   };
 

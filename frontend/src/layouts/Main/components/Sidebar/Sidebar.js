@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer, Typography } from '@material-ui/core';
-import {ImportExport, Dashboard } from '@material-ui/icons';
+import {ImportExport, Dashboard, Home as HomeIcon } from '@material-ui/icons';
 import { SidebarNav, Profile } from './components';
 
 const useStyles = makeStyles(theme => ({
@@ -36,6 +36,11 @@ const Sidebar = props => {
 
   const mainApps = [
     {
+      title: 'Home',
+      href: '/home',
+      icon: <HomeIcon />
+    },
+    {
       title: 'Import',
       href: '/import',
       icon: <ImportExport />
@@ -62,7 +67,7 @@ const Sidebar = props => {
       >
       <Profile />
         <Divider className={classes.divider} />
-        <Typography>Data Triage</Typography>
+        <Typography>Available Pages</Typography>
         <SidebarNav
           className={classes.nav}
           pages={mainApps}

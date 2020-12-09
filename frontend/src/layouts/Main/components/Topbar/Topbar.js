@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Hidden, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
+import { Auth } from 'api';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,7 +41,7 @@ const Topbar = props => {
 
         </div>
         <Hidden mdDown>
-        <RouterLink to="/signout" style={{ color: 'white' }}>
+        <RouterLink to="/login" onClick={() => Auth.logout()} style={{ color: 'white' }}>
           <IconButton
             className={classes.signOutButton}
             color="inherit"
