@@ -141,10 +141,6 @@ const Import = () => {
                 axios.request({url: requestURL, method: 'post', headers: config, data: formData}).then((response) => {
                     setOpen(true); // Display success message
                     setFilesUploaded(curr => [...curr, ...fileNames]);
-                    let storedImageHashes = JSON.parse(localStorage.getItem('images')) || [];
-                    let combinedImageHashes = storedImageHashes.concat(response.data.images);
-                    let newImageHashes = combinedImageHashes.filter((item, i, ar) => ar.indexOf(item) === i);
-                    localStorage.setItem('images', JSON.stringify(newImageHashes));
                 });
             }
 

@@ -7,6 +7,7 @@ const api = {
     model_list: '/model/list/', // GET
     model_predict: '/model/predict/', // POST
     image_result: '/model/predict/', // GET
+    user_images: '/model/user/' // GET
 };
 
 
