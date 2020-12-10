@@ -40,7 +40,9 @@ function ImageInformationCard(props) {
                 <Typography className={classes.title} gutterBottom>
                     {props.title}
                 </Typography>
-                    <Typography variant="h5">{props.description}</Typography>
+                <Typography variant="h5">
+                    {props.description}
+                </Typography>
             </CardContent>
         </Card>
     );

@@ -12,6 +12,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import ModelDataCard from "../../components/ModelDataCard/ModelDataCard";
 import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
+import { api, Auth, baseurl } from 'api';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +45,7 @@ const Review = () => {
         let imageHashes = JSON.parse(localStorage.getItem('images')) || [];
         let imageResults = {};
         imageHashes.forEach(hash => {
-            axios.get('http://localhost:5000/predict/' + hash)
+            axios.request({url: baseurl + api['image_result'] + hash, method: 'get', headers: {'Authorization': 'Bearer ' + Auth.token}})
                 .then((response) => {
                     if (response.data['models']) {
                         imageResults[response.data['filename']] = response.data['models'];

@@ -23,7 +23,7 @@ function ModelDataCard(props) {
             {props.scene_detection &&
             <SceneDetect data={props.scene_detection} />
             }
-            <Typography variant="h5">{props.description}</Typography>
+            <Typography variant="h5" component={'span'}>{props.description}</Typography>
         </div>
     );
 }

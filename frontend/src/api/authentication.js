@@ -25,10 +25,6 @@ let Auth = {
       return false;
     }
 
-    const config = {
-      headers: { Authorization: `Bearer ${Auth.token}` }
-    };
-
     axios.request({
       method: 'get',
       url: baseurl + api['auth_status'],

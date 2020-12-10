@@ -11,7 +11,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Typography } from '@material-ui/core';
+import { ButtonGroup, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 
 
@@ -30,9 +30,11 @@ function ExampleModel(props) {
 
     return (
         <div>
-            <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
-                {modelName}
-            </Button>
+            <ButtonGroup  variant="outlined" color="secondary">
+                <Button onClick={handleClickOpen}>
+                    {modelName}
+                </Button>
+            </ButtonGroup>
             <Dialog 
                 maxWidth='lg'
                 fullWidth={true}
@@ -42,12 +44,11 @@ function ExampleModel(props) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    <Typography variant="h3">
+                    <Typography variant="h3" component={'span'}>
                         {modelName}
                     </Typography>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -68,12 +69,13 @@ function ExampleModel(props) {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary" autoFocus>
-                        Close
-                    </Button>
+                    <ButtonGroup color="primary">
+                        <Button onClick={handleClose} autoFocus>
+                            Close
+                        </Button>
+                    </ButtonGroup>
                 </DialogActions>
             </Dialog>
         </div>

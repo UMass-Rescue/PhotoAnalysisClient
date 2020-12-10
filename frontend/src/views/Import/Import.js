@@ -22,6 +22,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import TableContainer from "@material-ui/core/TableContainer";
 import Box from "@material-ui/core/Box";
+import { api, Auth, baseurl } from 'api';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -78,7 +79,7 @@ const Import = () => {
 
 
     useEffect(() => {
-        axios.get('http://localhost:5000/model/list')
+        axios.request({ method: 'get', url: baseurl + api['model_list'], headers: { Authorization: 'Bearer ' + Auth.token}})
             .then((response) => {
                 setModelsAvailable(response.data['models']);
             }, (error) => {
@@ -107,10 +108,17 @@ const Import = () => {
 
     function uploadImages() {
 
-        const url = 'http://localhost:5000/predict';
+        const requestURL = baseurl + api['model_predict'];
         let currIndex = 0;
         while (currIndex < filesToUpload.length) {
+
+            // Upload images in batches of 3
             for (let imageCount = 0; imageCount < 3; imageCount++) {
+
+                // Ensure we have an image to upload
+                if (currIndex >= filesToUpload.length) {
+                    break;
+                }
 
                 const formData = new FormData();
                 let fileNames = [];
@@ -125,22 +133,20 @@ const Import = () => {
                 for (let i = 0; i < modelsToUse.length; i++) {
                     formData.append('models', modelsToUse[i]);
                 }
+
                 const config = {
-                    headers: {
+                        'Authorization': 'Bearer ' + Auth.token,
                         'content-type': 'multipart/form-data'
-                    }
-                }
-                axios.post(url, formData, config).then((response) => {
+                };
+                axios.request({url: requestURL, method: 'post', headers: config, data: formData}).then((response) => {
                     setOpen(true); // Display success message
                     setFilesUploaded(curr => [...curr, ...fileNames]);
-                    console.log('Updating!!');
                     let storedImageHashes = JSON.parse(localStorage.getItem('images')) || [];
                     let combinedImageHashes = storedImageHashes.concat(response.data.images);
                     let newImageHashes = combinedImageHashes.filter((item, i, ar) => ar.indexOf(item) === i);
                     localStorage.setItem('images', JSON.stringify(newImageHashes));
                 });
             }
-            console.log(filesUploaded);
 
         }
     }

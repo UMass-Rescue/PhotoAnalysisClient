@@ -47,7 +47,6 @@ function SceneDetect(props) {
                     </Typography>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table" size="small">
                                 <TableHead>
@@ -92,7 +91,6 @@ function SceneDetect(props) {
                             </Table>
                         </TableContainer>
 
-                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary" autoFocus>

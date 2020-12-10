@@ -47,7 +47,6 @@ function AgePredict(props) {
                     </Typography>
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -58,7 +57,6 @@ function AgePredict(props) {
                                 </TableHead>
                             </Table>
                         </TableContainer>
-                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary" autoFocus>
