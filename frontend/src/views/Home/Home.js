@@ -1,8 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
+import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {Box, Grid, Typography} from '@material-ui/core';
-import { useHistory } from 'react-router-dom'
 
 
 const useStyles = makeStyles(theme => ({
@@ -27,8 +25,6 @@ const Home = () => {
 
 
     // Set image total from localstorage
-    const [errorMessage, setErrorMessage] = useState('');
-    const history = useHistory();
 
     return (
         <div className={classes.root}>

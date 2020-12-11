@@ -11,7 +11,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import ModelDataCard from "../../components/ModelDataCard/ModelDataCard";
 import Card from "@material-ui/core/Card";
-import TextField from "@material-ui/core/TextField";
 import { api, Auth, baseurl } from 'api';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -55,6 +54,11 @@ const Review = () => {
     useEffect(() => {
         // Load in the image model data from the server
 
+        // Skip if this is 0. This prevents double-running on page load.
+        if (currentPage === 0) {
+            return;
+        }
+
         setImageData({});
 
         let imageHashes = [];
@@ -66,25 +70,42 @@ const Review = () => {
             if (response.data['status'] === 'success') {
                 imageHashes = [...response.data['images']];
 
-                let imageResults = {};
-                imageHashes.forEach(hash => {
-                    axios.request({ url: baseurl + api['image_result'] + hash, method: 'get', headers: { 'Authorization': 'Bearer ' + Auth.token } })
-                        .then((response) => {
-                            if (response.data['models']) {
-                                imageResults[response.data['filename']] = response.data['models'];
-                                let keyValue = response.data['filename'];
-                                let newValue = response.data['models'];
-                                setImageData(prevDict => ({ ...prevDict, [keyValue]: newValue }));
-                            }
-                        }).catch((error) => {
-                            if (error.response) {
-                                console.log(error);
-                            } else {
-                                console.log('WARNING: Unable to load image hash: ' + hash);
-                            }
-                        });
+                let imageListHeaders = {
+                    'Authorization': 'Bearer ' + Auth.token,
+                    'content-type': 'application/json',
+                }
+            
+                let newImageData = {};
 
+                axios.request({
+                    url: baseurl + api['image_result'],
+                    method: 'post',
+                    data: imageHashes,
+                    headers: imageListHeaders,
+                }).then((response) => {
+                    // console.log(response.data);
+
+                    response.data.map( (imageModelResult) => {
+                        if (imageModelResult['status'] === 'success') {
+                            newImageData[imageModelResult['filename']] = imageModelResult['models'];
+                        }
+                    });
+
+                    setImageData(newImageData);
+                }).catch((error) => {
+                    if (error.response) {
+                        console.log(error);
+                    } else {
+                        console.log('ERROR: Unable to load image model data.');
+                    }
                 });
+
+            }
+        }).catch( (error) => {
+            if (error.response) {
+            console.log(error.response);
+            } else {
+                console.log('Unable to connect to server to load images.');
             }
         });
     }, [currentPage]);
@@ -158,42 +179,45 @@ const Review = () => {
                         </Grid>
                     }
                     {pagesTotal > 0 ?
-                    <Grid item md={12}>
-                        <TableContainer className={classes.reviewTable}>
-                            <Table stickyHeader aria-label="sticky table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Image</TableCell>
-                                        <TableCell>Models</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {Object.keys(imageData).map((key, index) => (
-                                        <TableRow key={key}>
-                                            <TableCell component="th" scope="row">
-                                                {key}
-                                            </TableCell>
-                                            <TableCell>
-                                                <ModelDataCard {...imageData[key]} />
-                                            </TableCell>
+                        <Grid item md={12}>
+                            <TableContainer className={classes.reviewTable}>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Image</TableCell>
+                                            <TableCell>Models</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Grid>
-                    :
-                    <Grid
-                    container
-                    spacing={0}
-                    direction="column"
-                    alignItems="center"
-                    justify="center"
-                    >
-                        <Typography variant="h2" color={'error'} item xs={12}>
-                            No Images Available.
-                        </Typography>
-                    </Grid>
+                                    </TableHead>
+                                    <TableBody>
+                                        {Object.keys(imageData).map((key, index) => (
+                                            <TableRow key={key}>
+                                                <TableCell component="th" scope="row">
+                                                    {key}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <ModelDataCard {...imageData[key]} />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Grid>
+                        :
+                        <Grid
+                            container
+                            spacing={0}
+                            direction="column"
+                            alignItems="center"
+                            justify="center"
+                        >
+                            <Grid item xs={12}>
+                                <Typography variant="h2" color={'error'} >
+                                    No Images Available.
+                                </Typography>
+                            </Grid>
+                            
+                        </Grid>
                     }
                 </Grid>
             </Grid>

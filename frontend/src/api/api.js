@@ -5,9 +5,9 @@ const api = {
     auth_status: '/auth/status/',  // GET
     auth_profile: '/auth/profile/', // GET
     model_list: '/model/list/', // GET
-    model_predict: '/model/predict/', // POST
-    image_result: '/model/predict/', // GET
-    user_images: '/model/user/' // GET
+    model_predict: '/model/predict', // POST
+    image_result: '/model/results', // GET
+    user_images: '/model/user' // GET
 };
 
 
