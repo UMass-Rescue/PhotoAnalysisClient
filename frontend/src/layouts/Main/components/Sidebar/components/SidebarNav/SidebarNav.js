@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem, Button, colors } from '@material-ui/core';
+import { Auth } from 'api';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -54,13 +55,17 @@ const SidebarNav = props => {
 
   const classes = useStyles();
 
-  return (
-    <List
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      {pages.map(page => (
-        <ListItem
+
+  function loadPageIcon(page) {
+
+    if (page.permissions) {
+      if (!(Auth.isAuthenticated && (page.permissions.includes('*') || page.permissions.some(item => Auth.getRoles().includes(item))))) {
+        return null;
+      }
+    }
+    
+    return (
+      <ListItem
           className={classes.item}
           disableGutters
           key={page.title}
@@ -74,7 +79,17 @@ const SidebarNav = props => {
             <div className={classes.icon}>{page.icon}</div>
             {page.title}
           </Button>
-        </ListItem>
+      </ListItem>
+    )
+  }
+
+  return (
+    <List
+      {...rest}
+      className={clsx(classes.root, className)}
+    >
+      {pages.map(page => (
+       loadPageIcon(page)
       ))}
     </List>
   );

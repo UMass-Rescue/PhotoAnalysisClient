@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     },
     uploadButtonContainer: {
         width: '100%',
-        height: '10vh',
+        height: '15vh',
         paddingTop: '2vh',
         borderRadius: '0.6em',
     },

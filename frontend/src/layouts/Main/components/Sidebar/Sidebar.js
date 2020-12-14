@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer, Typography } from '@material-ui/core';
 import {ImportExport, Dashboard, Home as HomeIcon } from '@material-ui/icons';
 import { SidebarNav, Profile } from './components';
+import { routePermissions } from 'Routes';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -38,16 +39,19 @@ const Sidebar = props => {
     {
       title: 'Home',
       href: '/home',
+      permissions: routePermissions['home'],
       icon: <HomeIcon />
     },
     {
       title: 'Import',
       href: '/import',
+      permissions: routePermissions['import'],
       icon: <ImportExport />
     },
     {
       title: 'Review',
       href: '/review',
+      permissions: routePermissions['review'],
       icon: <Dashboard />
     }
   ];

@@ -12,6 +12,14 @@ import {
     Home as HomeView
 } from './views';
 
+
+export const routePermissions = {
+    home: ['admin', 'investigator', 'researcher'],
+    import: ['admin', 'investigator', 'researcher'],
+    review: ['admin', 'investigator', 'researcher'],
+}
+
+
 const Routes = () => {
     return (
         <Switch>
@@ -25,7 +33,7 @@ const Routes = () => {
                 exact
                 layout={MainLayout}
                 useAuth={true}
-                permissions={['admin', 'investigator', 'researcher']}
+                permissions={routePermissions['home']}
                 path="/home"
             />
             <RouteWithLayout
@@ -40,7 +48,7 @@ const Routes = () => {
                 exact
                 layout={MainLayout}
                 useAuth={true}
-                permissions={['admin', 'researcher']}
+                permissions={routePermissions['import']}
                 path="/import"
             />
             <RouteWithLayout
@@ -48,15 +56,14 @@ const Routes = () => {
                 exact
                 layout={MainLayout}
                 useAuth={true}
-                permissions={['admin', 'investigator', 'researcher']}
+                permissions={routePermissions['review']}
                 path="/review"
             />
             <RouteWithLayout
                 component={NotFoundView}
                 exact
                 layout={MinimalLayout}
-                useAuth={true}
-                permissions={['admin', 'investigator', 'researcher']}
+                useAuth={false}
                 path="/not-found"
             />
             <Redirect to="/not-found"/>
