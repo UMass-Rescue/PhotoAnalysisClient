@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/styles';
-import { Button, ButtonGroup, CardContent, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
-import ModelDataCard from "../../components/ModelDataCard/ModelDataCard";
-import Card from "@material-ui/core/Card";
 import { api, Auth, baseurl } from 'api';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import { DataGrid } from '@material-ui/data-grid';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,9 +23,21 @@ const useStyles = makeStyles(theme => ({
 const Review = () => {
     const classes = useStyles();
 
-    const [currentPage, setCurrentPage] = useState(0);
     const [pagesTotal, setPagesTotal] = useState(0);
-    const [imageData, setImageData] = useState({});
+    const [pageSize, setPageSize] = useState(0);
+    const [numImagesTotal, setNumImagesTotal] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    
+    const [loading, setLoading] = useState(false);
+    const [rows, setRows] = useState([]);
+
+      
+    const columns = [
+        { field: 'file_names', headerName: 'File Names', width: 300 },
+        { field: 'users', headerName: 'Users', width: 300 },
+        { field: 'hash_md5', headerName: 'MD5 Hash', width: 250, sortable: false },
+    ];
 
     // This will run initially on page load
     useEffect(() => {
@@ -45,21 +48,16 @@ const Review = () => {
             headers: { 'Authorization': 'Bearer ' + Auth.token }
         }).then((response) => {
             setPagesTotal(response.data['num_pages']);
-            if (response.data['num_pages'] > 0) {
-                setCurrentPage(1);
-            }
+            setPageSize(response.data['page_size']);
+            setNumImagesTotal(response.data['num_images']);
+            console.log(response.data['num_images']);
         });
     }, []);
 
     useEffect(() => {
         // Load in the image model data from the server
-
-        // Skip if this is 0. This prevents double-running on page load.
-        if (currentPage === 0) {
-            return;
-        }
-
-        setImageData({});
+        // console.log(numImagesTotal);
+        setLoading(true);
 
         let imageHashes = [];
         axios.request({
@@ -68,14 +66,14 @@ const Review = () => {
             headers: { 'Authorization': 'Bearer ' + Auth.token }
         }).then((response) => {
             if (response.data['status'] === 'success') {
-                imageHashes = [...response.data['images']];
+                imageHashes = [...response.data['hashes']];
 
                 let imageListHeaders = {
                     'Authorization': 'Bearer ' + Auth.token,
                     'content-type': 'application/json',
                 }
             
-                let newImageData = {};
+                let newImageData = [];
 
                 axios.request({
                     url: baseurl + api['image_result'],
@@ -83,15 +81,21 @@ const Review = () => {
                     data: imageHashes,
                     headers: imageListHeaders,
                 }).then((response) => {
-                    // console.log(response.data);
 
                     response.data.map( (imageModelResult) => {
                         if (imageModelResult['status'] === 'success') {
-                            newImageData[imageModelResult['filename']] = imageModelResult['models'];
+                            let rowData = {
+                                id: imageModelResult['hash_md5'],
+                                hash_md5: imageModelResult['hash_md5'],
+                                file_names: imageModelResult['file_names'].join(', '),
+                                users: imageModelResult['users'],
+                            };
+
+                            newImageData.push(rowData);
                         }
                     });
 
-                    setImageData(newImageData);
+                    setRows(newImageData);
                 }).catch((error) => {
                     if (error.response) {
                         console.log(error);
@@ -108,8 +112,8 @@ const Review = () => {
                 console.log('Unable to connect to server to load images.');
             }
         });
+        setLoading(false);
     }, [currentPage]);
-
 
     return (
         <div className={classes.root}>
@@ -140,68 +144,33 @@ const Review = () => {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <ImageInformationCard title="Number of Pages" description={pagesTotal} />
+                        <ImageInformationCard title="Number of Images" description={numImagesTotal} />
                     </Grid>
 
-                    {pagesTotal > 0 &&
-                        <Grid item md={12}>
-
-                            <Grid
-                                container
-                                spacing={0}
-                                direction="column"
-                                alignItems="center"
-                                justify="center"
-                            >
-
-                                <Grid item xs={4}>
-                                    <Card style={{ height: '8vh' }}>
-                                        <CardContent>
-                                            <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-                                                {currentPage > 1 ?
-                                                    <Button onClick={() => setCurrentPage(currentPage - 1)}><NavigateBeforeIcon />Previous Page</Button>
-                                                    :
-                                                    <Button disabled><NavigateBeforeIcon />Previous Page</Button>
-                                                }
-
-
-
-                                                {currentPage < pagesTotal ?
-                                                    <Button onClick={() => setCurrentPage(currentPage + 1)}>Next Page <NavigateNextIcon /></Button>
-                                                    :
-                                                    <Button disabled>Next Page <NavigateNextIcon /></Button>
-                                                }
-                                            </ButtonGroup>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    }
                     {pagesTotal > 0 ?
-                        <Grid item md={12}>
-                            <TableContainer className={classes.reviewTable}>
-                                <Table stickyHeader aria-label="sticky table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Image</TableCell>
-                                            <TableCell>Models</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {Object.keys(imageData).map((key, index) => (
-                                            <TableRow key={key}>
-                                                <TableCell component="th" scope="row">
-                                                    {key}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <ModelDataCard {...imageData[key]} />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                        <Grid 
+                            item 
+                            md={12}
+                            style={{ 
+                                height: '100vh', 
+                                width: '100%' 
+                            }}
+                        >
+
+                            <DataGrid 
+                                page={currentPage}
+                                onPageChange={(params) => {
+                                    setCurrentPage(params.page);
+                                }}
+                                pageSize={pageSize}
+                                rowCount={numImagesTotal}
+                                rows={rows}
+                                columns={columns}
+                                loading={loading}
+                                pagination
+                                paginationMode="server"
+                            />
+
                         </Grid>
                         :
                         <Grid
