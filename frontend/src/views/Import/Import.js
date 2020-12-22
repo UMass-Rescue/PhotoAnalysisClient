@@ -22,6 +22,8 @@ import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import TableContainer from "@material-ui/core/TableContainer";
 import Box from "@material-ui/core/Box";
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ClearIcon from '@material-ui/icons/Clear';
 import { api, Auth, baseurl } from 'api';
 
 const useStyles = makeStyles(theme => ({
@@ -76,7 +78,7 @@ const Import = () => {
     const [modelsAvailable, setModelsAvailable] = useState([]);  // Models available from the photoanalysisserver
     const [modelsToUse, setModelsToUse] = useState([]);  // Models for the photoanalysisserver to use on uploads
     const [open, setOpen] = useState(false); // Handles state of image upload snackbar
-
+    const [allChecked, setAllChecked] = useState(false); // If all models are selected
 
     useEffect(() => {
         axios.request({ method: 'get', url: baseurl + api['model_list'], headers: { Authorization: 'Bearer ' + Auth.token}})
@@ -250,10 +252,41 @@ const Import = () => {
                     <Grid item md={4}>
                         <Card className={classes.modelSelectorContainer}>
                             <CardContent>
-                                <Typography variant="h5" style={{marginBottom: '1em'}} >
-                                    Choose Models For Processing
-                                </Typography>
-
+                                <Grid justify="space-between" container>  
+                                    <Grid item>
+                                        <Typography variant="h5" style={{ marginBottom: '1em' }}> Select Models </Typography>
+                                    </Grid>
+                                    
+                                    <Grid item>
+                                        {!allChecked ?
+                                            <Button
+                                                variant="outlined" 
+                                                size='small'
+                                                disableElevation
+                                                startIcon={<DoneAllIcon />}
+                                                onClick={() => {
+                                                    setAllChecked(true);
+                                                    setModelsToUse([...modelsAvailable]);
+                                                }}
+                                            >
+                                                Use All
+                                            </Button>
+                                        :
+                                            <Button
+                                            variant="outlined" 
+                                            size='small'
+                                            disableElevation
+                                            startIcon={<ClearIcon />}
+                                            onClick={() => {
+                                                setAllChecked(false);
+                                                setModelsToUse([]);
+                                            }}
+                                            >
+                                            Clear
+                                        </Button>
+                                        }
+                                    </Grid>
+                                </Grid>
                                 <Table className={classes.modelSelectorTable} stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
@@ -268,10 +301,15 @@ const Import = () => {
                                                     {modelName.replaceAll('_', ' ')}
                                                 </TableCell>
                                                 <TableCell>
+                                                    {!allChecked ?
                                                     <FormControlLabel
+                                                        id={modelName}
                                                         control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
                                                         label={''}
                                                     />
+                                                    :
+                                                    <CheckCircleOutlineIcon />
+                                                    }
                                                 </TableCell>
                                             </TableRow>
                                         ))}
