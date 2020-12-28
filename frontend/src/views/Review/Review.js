@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/styles';
-import { Button, Card, CardContent, Grid, Input, TextField, Typography } from '@material-ui/core';
+import { Button, ButtonGroup, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, TextField, Typography } from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
 import { api, Auth, baseurl } from 'api';
 import { DataGrid } from '@material-ui/data-grid';
+import ModelSearchComponent from 'components/ModelSearchComponent/ModelSearchComponent';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,21 +24,30 @@ const useStyles = makeStyles(theme => ({
 const Review = () => {
     const classes = useStyles();
 
+    // General Image Data from Server
     const [pagesTotal, setPagesTotal] = useState(0);
     const [pageSize, setPageSize] = useState(0);
     const [numImagesTotal, setNumImagesTotal] = useState(0);
+    const [modelList, setModelList] = useState({
+        model1: ['a', 'b', 'c'], 
+        model2: ['d', 'e', 'f'],
+        bigModel: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh']
+    });
 
-    const [currentPage, setCurrentPage] = useState(1);
-
+    // Image Result Table
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
-
-    const columns = [
+    // Searching
+    const [generalSearchQuery, setGeneralSearchQuery] = useState('');
+    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
+    const [advancedSearchFilter, setAdvancedSearchFilter] = useState({});
+    const columns = useState([
         { field: 'file_names', headerName: 'File Names', width: 300 },
         { field: 'users', headerName: 'Users', width: 300 },
         { field: 'hash_md5', headerName: 'MD5 Hash', width: 250, sortable: false },
-    ];
+    ]);
 
     // This will run initially on page load
     useEffect(() => {
@@ -50,7 +60,6 @@ const Review = () => {
             setPagesTotal(response.data['num_pages']);
             setPageSize(response.data['page_size']);
             setNumImagesTotal(response.data['num_images']);
-            console.log(response.data['num_images']);
         });
     }, []);
 
@@ -81,7 +90,7 @@ const Review = () => {
                     headers: imageListHeaders,
                 }).then((response) => {
 
-                    response.data.map((imageModelResult) => {
+                    response.data.forEach((imageModelResult) => {
                         if (imageModelResult['status'] === 'success') {
                             let rowData = {
                                 id: imageModelResult['hash_md5'],
@@ -144,13 +153,27 @@ const Review = () => {
                             <CardContent>
                                 <Grid justify="space-between" container spacing={3} alignItems="center">
                                     <Grid item xs={8}>
-                                        <TextField variant="outlined" fullWidth label='Search Image and Model Data'></TextField>
+                                        <TextField 
+                                            variant="outlined" 
+                                            fullWidth 
+                                            label='Search Image and Model Data'
+                                            onChange={(e) => {setGeneralSearchQuery(e.target.value)}}
+                                        ></TextField>
                                     </Grid>
-                                    <Grid item xs={2}>
-                                        <Button color='secondary' fullWidth variant='contained'>Search</Button>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <Button color='primary' fullWidth variant='contained'>Advanced</Button>
+                                    <Grid item xs={4}>
+
+                                        <ButtonGroup size='large'>
+                                            <Button color='secondary' variant='contained'>Search</Button>
+            
+                                            <Button
+                                                color='primary'
+                                                variant='contained'
+                                                onClick={() => setAdvancedSearchOpen(true)}
+                                            >
+                                                Advanced
+                                            </Button>
+                                        </ButtonGroup>
+                                        
                                     </Grid>
                                 </Grid>
                             </CardContent>
@@ -200,6 +223,59 @@ const Review = () => {
                     }
                 </Grid>
             </Grid>
+
+            <Dialog
+                open={advancedSearchOpen}
+                onClose={() => setAdvancedSearchOpen(false)}
+                aria-labelledby="form-dialog-title"
+                fullWidth={true}
+                maxWidth = {'lg'}
+            >
+                <DialogTitle id="form-dialog-title">Advanced Search</DialogTitle>
+                <DialogContent style={{height: '80vh', overflow: 'auto'}}>
+
+                    <Grid
+                        container
+                        spacing={3}
+                        display="flex"
+                        justify="center"
+                    >
+
+                        <Grid item xs={8}>
+                            <TextField label="General Search" variant='outlined' defaultValue={generalSearchQuery}></TextField>
+                        </Grid>
+
+                        <Grid item xs={12}><Divider /></Grid>
+
+                        <Grid item xs={12}>
+                            <TextField label="Search Models" style={{width: '50%'}}></TextField>
+                        </Grid>
+
+
+                        {Object.keys(modelList).map( (modelName) => (
+                            <Grid item xs={4} key={modelName}>
+                                <ModelSearchComponent 
+                                    modelName={modelName}
+                                    modelClasses={modelList[modelName]}
+                                    onClassSelect={(classList) => setAdvancedSearchFilter({...advancedSearchFilter, [modelName]: classList})}
+                                /> 
+                            </Grid>
+                        ))}
+                        
+
+
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setAdvancedSearchOpen(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button color="secondary" variant={'contained'}>
+                        Search
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </div>
     );
 };

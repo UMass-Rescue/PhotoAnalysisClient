@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/styles';
 import { Box, Grid, Card, CardContent, Button, Typography, TextField } from '@material-ui/core';
@@ -29,12 +29,6 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const history = useHistory();
-
-    useEffect(() => {
-        if (Auth.isAuthenticated) {
-            sendToHome();
-        }
-    }, [sendToHome]);
 
 
     function sendToHome() {

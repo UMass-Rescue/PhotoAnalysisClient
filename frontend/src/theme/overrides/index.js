@@ -5,7 +5,7 @@ import MuiTableCell from './MuiTableCell';
 import MuiTableHead from './MuiTableHead';
 import MuiTypography from './MuiTypography';
 
-export default {
+ export default {
   MuiButton,
   MuiIconButton,
   MuiPaper,
