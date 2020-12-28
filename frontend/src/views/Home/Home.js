@@ -220,13 +220,13 @@ const Home = () => {
                     label="API Key Description"
                     type="text"
                     onChange={(e) => setNewKeyDetail(e.target.value)}
-                    fullWidth
+                    fullWidth={true}
                 />
                 <TextField
                     id="standard-select-currency-native"
                     select
                     label="Microservice"
-                    fullWidth
+                    fullWidth={true}
                     value={newKeyType}
                     onChange={(e) => setNewKeyType(e.target.value)}
                     helperText="Please Select Microservice"

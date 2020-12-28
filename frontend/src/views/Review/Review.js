@@ -31,7 +31,19 @@ const Review = () => {
     const [modelList, setModelList] = useState({
         model1: ['a', 'b', 'c'], 
         model2: ['d', 'e', 'f'],
-        bigModel: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh']
+        bigModel: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
+        model3: ['a', 'b', 'c'], 
+        model4: ['d', 'e', 'f'],
+        bigModel2: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
+        model5: ['a', 'b', 'c'], 
+        model6: ['d', 'e', 'f'],
+        bigModel3: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
+        model7: ['a', 'b', 'c'], 
+        model8: ['d', 'e', 'f'],
+        bigModel4: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
+        model9: ['a', 'b', 'c'], 
+        model10: ['d', 'e', 'f'],
+        bigModel5: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
     });
 
     // Image Result Table
@@ -102,7 +114,7 @@ const Review = () => {
                             newImageData.push(rowData);
                         }
                     });
-
+                    console.log(newImageData);
                     setRows(newImageData);
                 }).catch((error) => {
                     if (error.response) {
@@ -155,7 +167,7 @@ const Review = () => {
                                     <Grid item xs={8}>
                                         <TextField 
                                             variant="outlined" 
-                                            fullWidth 
+                                            fullWidth={true} 
                                             label='Search Image and Model Data'
                                             onChange={(e) => {setGeneralSearchQuery(e.target.value)}}
                                         ></TextField>
@@ -242,15 +254,20 @@ const Review = () => {
                     >
 
                         <Grid item xs={8}>
-                            <TextField label="General Search" variant='outlined' defaultValue={generalSearchQuery}></TextField>
+                            <TextField label="General Search" variant='outlined' fullWidth={true} defaultValue={generalSearchQuery}></TextField>
                         </Grid>
 
                         <Grid item xs={12}><Divider /></Grid>
 
-                        <Grid item xs={12}>
-                            <TextField label="Search Models" style={{width: '50%'}}></TextField>
+                        <Grid item xs={4}>
+                            <TextField label="Search Models" fullWidth></TextField>
                         </Grid>
 
+                        <Grid item xs={2}>
+                            <Button variant='contained' color='primary' size='small'>Clear Selection</Button>
+                        </Grid>
+
+                        <Grid item xs={12}><Divider /></Grid>
 
                         {Object.keys(modelList).map( (modelName) => (
                             <Grid item xs={4} key={modelName}>
@@ -267,7 +284,7 @@ const Review = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setAdvancedSearchOpen(false)} color="primary">
+                    <Button onClick={() => setAdvancedSearchOpen(false)} color="primary" variant='contained'>
                         Cancel
                     </Button>
                     <Button color="secondary" variant={'contained'}>

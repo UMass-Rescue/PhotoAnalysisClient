@@ -84,7 +84,7 @@ function ModelSearchComponent(props) {
 
                     { classesToUse.length > 0 &&
                     <Alert icon={<SearchIcon fontSize="small" />}  severity="error">
-                    Filter Added
+                        Filter Added
                     </Alert>
                     }
 
@@ -114,7 +114,7 @@ function ModelSearchComponent(props) {
                         {useLargeModelView && 
                         <TextField 
                             variant="outlined" 
-                            fullWidth 
+                            fullWidth={true} 
                             label='Search Classes'
                             style={{marginBottom: '1em'}}
                             onChange={(e) => setSearchFilter(e.target.value)}
@@ -123,9 +123,7 @@ function ModelSearchComponent(props) {
 
                     {classesToDisplay.map((modelClass) => (
                         <ListItem key={modelName + '-' + modelClass}>
-                                <ListItemText
-                                    primary={modelClass}
-                                />
+                                <ListItemText>{modelClass}</ListItemText>
                                 <ListItemSecondaryAction>
                                     {classesToUse.includes(modelClass) ?
                                         <IconButton edge="end" onClick={(e) => removeClassToUse(modelClass)}><CheckCircleOutlineIcon /></IconButton>

@@ -120,7 +120,7 @@ const Login = () => {
                                 <Grid item xs={8}>
                                     <TextField 
                                         variant="outlined" 
-                                        fullWidth 
+                                        fullWidth={true} 
                                         size="medium" 
                                         id="username" 
                                         label="Username" 
@@ -137,7 +137,7 @@ const Login = () => {
                                 <Grid item xs={8}>
                                     <TextField 
                                         variant="outlined" 
-                                        fullWidth 
+                                        fullWidth={true} 
                                         size="medium" 
                                         id="password" 
                                         type="password"
@@ -160,7 +160,7 @@ const Login = () => {
                                 <Grid item xs={8}>
                                     <Button
                                         variant="contained" color="secondary" type="submit"
-                                        fullWidth
+                                        fullWidth={true}
                                         onClick={attemptLogin}
                                     >
                                         Login
