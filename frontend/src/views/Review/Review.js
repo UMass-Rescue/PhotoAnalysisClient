@@ -55,11 +55,11 @@ const Review = () => {
     const [generalSearchQuery, setGeneralSearchQuery] = useState('');
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
     const [advancedSearchFilter, setAdvancedSearchFilter] = useState({});
-    const columns = useState([
+    const columns = [
         { field: 'file_names', headerName: 'File Names', width: 300 },
         { field: 'users', headerName: 'Users', width: 300 },
         { field: 'hash_md5', headerName: 'MD5 Hash', width: 250, sortable: false },
-    ]);
+    ];
 
     // This will run initially on page load
     useEffect(() => {
@@ -114,8 +114,7 @@ const Review = () => {
                             newImageData.push(rowData);
                         }
                     });
-                    console.log(newImageData);
-                    setRows(newImageData);
+                    setRows([...newImageData]);
                 }).catch((error) => {
                     if (error.response) {
                         console.log(error);
@@ -195,7 +194,7 @@ const Review = () => {
                     {pagesTotal > 0 ?
                         <Grid
                             item
-                            md={12}
+                            sm={12}
                             style={{
                                 height: '100vh',
                                 width: '100%'
