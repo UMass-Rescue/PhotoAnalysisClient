@@ -14,7 +14,7 @@ import {
 
 
 export const routePermissions = {
-    home: ['admin', 'investigator', 'researcher'],
+    home: ['*'],
     import: ['admin', 'investigator', 'researcher'],
     review: ['admin', 'investigator', 'researcher'],
 }

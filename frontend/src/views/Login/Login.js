@@ -34,13 +34,18 @@ const Login = () => {
         if (Auth.isAuthenticated) {
             sendToHome();
         }
-    }, []);
+    }, [sendToHome]);
 
 
     function sendToHome() {
         history.push('/home');
     }
 
+    function pressEnterToLogin(event) {
+        if (event.key === 'Enter') {
+            attemptLogin();
+        }
+    }
 
     function attemptLogin() {
         let formData = new FormData();
@@ -126,6 +131,7 @@ const Login = () => {
                                         id="username" 
                                         label="Username" 
                                         onChange={(event) => setUsername(event.target.value)}
+                                        onKeyDown={(e) => pressEnterToLogin(e)}
                                     />
                                 </Grid>
                                 <Grid xs={2} item></Grid>
@@ -143,13 +149,16 @@ const Login = () => {
                                         type="password"
                                         label="Password" 
                                         onChange={(event) => setPassword(event.target.value)}
+                                        onKeyDown={(e) => pressEnterToLogin(e)}
                                     />                                
                                 </Grid>
                                 <Grid xs={2} item></Grid>
                                 <Grid item xs={12} className={classes.spacingGridRow} />
 
                                 <Grid xs={2} item></Grid>
-                                <Grid item xs={8}><Typography variant="subtitle1" color='error'>{errorMessage}</Typography></Grid>
+                                <Grid item xs={8}>
+                                    <Typography variant="subtitle1" color='error'>{errorMessage}</Typography>
+                                </Grid>
                                 <Grid xs={2} item></Grid>
 
                                 {/* Row 4 */}

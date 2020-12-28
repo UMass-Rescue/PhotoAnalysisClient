@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/styles';
-import { Grid, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, Grid, Input, TextField, Typography } from '@material-ui/core';
 import ImageInformationCard from "../../components/ImageInformationCard/ImageInformationCard";
 import { api, Auth, baseurl } from 'api';
 import { DataGrid } from '@material-ui/data-grid';
@@ -28,11 +28,11 @@ const Review = () => {
     const [numImagesTotal, setNumImagesTotal] = useState(0);
 
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
 
-      
+
     const columns = [
         { field: 'file_names', headerName: 'File Names', width: 300 },
         { field: 'users', headerName: 'Users', width: 300 },
@@ -56,7 +56,6 @@ const Review = () => {
 
     useEffect(() => {
         // Load in the image model data from the server
-        // console.log(numImagesTotal);
         setLoading(true);
 
         let imageHashes = [];
@@ -72,7 +71,7 @@ const Review = () => {
                     'Authorization': 'Bearer ' + Auth.token,
                     'content-type': 'application/json',
                 }
-            
+
                 let newImageData = [];
 
                 axios.request({
@@ -82,7 +81,7 @@ const Review = () => {
                     headers: imageListHeaders,
                 }).then((response) => {
 
-                    response.data.map( (imageModelResult) => {
+                    response.data.map((imageModelResult) => {
                         if (imageModelResult['status'] === 'success') {
                             let rowData = {
                                 id: imageModelResult['hash_md5'],
@@ -105,9 +104,9 @@ const Review = () => {
                 });
 
             }
-        }).catch( (error) => {
+        }).catch((error) => {
             if (error.response) {
-            console.log(error.response);
+                console.log(error.response);
             } else {
                 console.log('Unable to connect to server to load images.');
             }
@@ -123,18 +122,11 @@ const Review = () => {
                 direction="column"
             >
 
-                {/* Page Title  */}
-                <Grid item xs={12}>
-                    <Typography variant="h2" mt={5}>
-                        Review Images
-                    </Typography>
-                </Grid>
-
                 <Grid
                     container
                     justify="center"
                     direction="row"
-                    spacing={4}
+                    spacing={2}
                     style={{
                         marginBottom: '2em',
                     }}
@@ -147,17 +139,35 @@ const Review = () => {
                         <ImageInformationCard title="Number of Images" description={numImagesTotal} />
                     </Grid>
 
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardContent>
+                                <Grid justify="space-between" container spacing={3} alignItems="center">
+                                    <Grid item xs={8}>
+                                        <TextField variant="outlined" fullWidth label='Search Image and Model Data'></TextField>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Button color='secondary' fullWidth variant='contained'>Search</Button>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Button color='primary' fullWidth variant='contained'>Advanced</Button>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
                     {pagesTotal > 0 ?
-                        <Grid 
-                            item 
+                        <Grid
+                            item
                             md={12}
-                            style={{ 
-                                height: '100vh', 
-                                width: '100%' 
+                            style={{
+                                height: '100vh',
+                                width: '100%'
                             }}
                         >
 
-                            <DataGrid 
+                            <DataGrid
                                 page={currentPage}
                                 onPageChange={(params) => {
                                     setCurrentPage(params.page);
@@ -185,7 +195,7 @@ const Review = () => {
                                     No Images Available.
                                 </Typography>
                             </Grid>
-                            
+
                         </Grid>
                     }
                 </Grid>

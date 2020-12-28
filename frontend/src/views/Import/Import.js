@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {makeStyles} from '@material-ui/styles';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/styles';
 import axios from 'axios';
 import {
     Grid,
@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
         borderRadius: '0.6em',
     },
     headerGridCard: {
-        height: '6vh',
+        width: '100%'
     }
 }));
 
@@ -81,7 +81,7 @@ const Import = () => {
     const [allChecked, setAllChecked] = useState(false); // If all models are selected
 
     useEffect(() => {
-        axios.request({ method: 'get', url: baseurl + api['model_list'], headers: { Authorization: 'Bearer ' + Auth.token}})
+        axios.request({ method: 'get', url: baseurl + api['model_list'], headers: { Authorization: 'Bearer ' + Auth.token } })
             .then((response) => {
                 setModelsAvailable(response.data['models']);
             }, (error) => {
@@ -137,10 +137,10 @@ const Import = () => {
                 }
 
                 const config = {
-                        'Authorization': 'Bearer ' + Auth.token,
-                        'content-type': 'multipart/form-data'
+                    'Authorization': 'Bearer ' + Auth.token,
+                    'content-type': 'multipart/form-data'
                 };
-                axios.request({url: requestURL, method: 'post', headers: config, data: formData}).then((response) => {
+                axios.request({ url: requestURL, method: 'post', headers: config, data: formData }).then((response) => {
                     setOpen(true); // Display success message
                     setFilesUploaded(curr => [...curr, ...fileNames]);
                 });
@@ -161,9 +161,9 @@ const Import = () => {
     return (
         <div className={classes.root}>
 
-            <ImageDropzone filelistfunction={addFilesToUpload}/>
+            <ImageDropzone filelistfunction={addFilesToUpload} />
 
-            <div style={{marginTop: '1em'}}>
+            <div style={{ marginTop: '1em' }}>
                 <Grid
                     container
                     spacing={2}
@@ -172,48 +172,63 @@ const Import = () => {
 
                     {/*Header Card: Images*/}
                     <Grid item md={4} >
-                        <Box display={{ xs: "none", lg: "block" }}>
-                            <Card className={classes.headerGridCard}>
+                        <Grid
+                            container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                        >
+                            <Card item sm={12} className={classes.headerGridCard}>
                                 <CardContent>
-                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                    <Typography variant="h3">
                                         1. Add Images
-                                    </Typography>
+                                </Typography>
                                 </CardContent>
                             </Card>
-                        </Box>
+                        </Grid>
                     </Grid>
 
                     {/*Header Card: Models*/}
                     <Grid item md={4} >
-                        <Box display={{ xs: "none", lg: "block" }}>
-                            <Card className={classes.headerGridCard}>
+                        <Grid
+                            container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                        >
+                            <Card item sm={12} className={classes.headerGridCard}>
                                 <CardContent>
-                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                    <Typography variant="h3">
                                         2. Choose Models
-                                    </Typography>
+                                </Typography>
                                 </CardContent>
                             </Card>
-                        </Box>
+                        </Grid>
                     </Grid>
 
                     {/*Header Card: Upload*/}
                     <Grid item md={4} >
-                        <Box display={{ xs: "none", lg: "block" }}>
-                            <Card className={classes.headerGridCard}>
+                        <Grid
+                            container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                        >
+                            <Card item sm={12} className={classes.headerGridCard}>
                                 <CardContent>
-                                    <Typography variant="h3" style={{marginBottom: '1em'}}>
+                                    <Typography variant="h3">
                                         3. Upload for Processing
-                                    </Typography>
+                                </Typography>
                                 </CardContent>
                             </Card>
-                        </Box>
+                        </Grid>
                     </Grid>
 
                     {/*Review Images*/}
                     <Grid item md={4}>
                         <Card className={classes.imageListContainer}>
                             <CardContent>
-                                <Typography variant="h5" style={{marginBottom: '1em'}}>
+                                <Typography variant="h5" style={{ marginBottom: '1em' }}>
                                     Images
                                 </Typography>
 
@@ -226,7 +241,7 @@ const Import = () => {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {filesToUpload.map( (fileObject) => (
+                                            {filesToUpload.map((fileObject) => (
                                                 <TableRow key={fileObject.name}>
                                                     <TableCell component="th" scope="row">
                                                         {fileObject.name}
@@ -235,7 +250,7 @@ const Import = () => {
                                                         {(filesUploaded.includes(fileObject.name) &&
                                                             <CheckCircleOutlineIcon />
                                                         ) ||
-                                                        <RemoveIcon />
+                                                            <RemoveIcon />
                                                         }
 
                                                     </TableCell>
@@ -252,38 +267,44 @@ const Import = () => {
                     <Grid item md={4}>
                         <Card className={classes.modelSelectorContainer}>
                             <CardContent>
-                                <Grid justify="space-between" container>  
+                                <Grid justify="space-between" container>
                                     <Grid item>
                                         <Typography variant="h5" style={{ marginBottom: '1em' }}> Select Models </Typography>
                                     </Grid>
-                                    
+
                                     <Grid item>
-                                        {!allChecked ?
-                                            <Button
-                                                variant="outlined" 
-                                                size='small'
-                                                disableElevation
-                                                startIcon={<DoneAllIcon />}
-                                                onClick={() => {
-                                                    setAllChecked(true);
-                                                    setModelsToUse([...modelsAvailable]);
-                                                }}
-                                            >
-                                                Use All
-                                            </Button>
-                                        :
-                                            <Button
-                                            variant="outlined" 
-                                            size='small'
-                                            disableElevation
-                                            startIcon={<ClearIcon />}
-                                            onClick={() => {
-                                                setAllChecked(false);
-                                                setModelsToUse([]);
-                                            }}
-                                            >
-                                            Clear
-                                        </Button>
+                                        {modelsAvailable.length > 0 ?
+                                            <div id="model-select-button">
+                                                {!allChecked ?
+                                                    <Button
+                                                        variant="outlined"
+                                                        size='small'
+                                                        disableElevation
+                                                        startIcon={<DoneAllIcon />}
+                                                        onClick={() => {
+                                                            setAllChecked(true);
+                                                            setModelsToUse([...modelsAvailable]);
+                                                        }}
+                                                    >
+                                                        Use All
+                                                    </Button>
+                                                    :
+                                                    <Button
+                                                        variant="outlined"
+                                                        size='small'
+                                                        disableElevation
+                                                        startIcon={<ClearIcon />}
+                                                        onClick={() => {
+                                                            setAllChecked(false);
+                                                            setModelsToUse([]);
+                                                        }}
+                                                    >
+                                                        Clear
+                                                </Button>
+                                                }
+                                            </div>
+                                            :
+                                            <div id='no-model-select-button'></div>
                                         }
                                     </Grid>
                                 </Grid>
@@ -295,20 +316,20 @@ const Import = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {modelsAvailable.map( (modelName) => (
+                                        {modelsAvailable.map((modelName) => (
                                             <TableRow key={modelName}>
                                                 <TableCell component="th" scope="row">
                                                     {modelName.replaceAll('_', ' ')}
                                                 </TableCell>
                                                 <TableCell>
                                                     {!allChecked ?
-                                                    <FormControlLabel
-                                                        id={modelName}
-                                                        control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
-                                                        label={''}
-                                                    />
-                                                    :
-                                                    <CheckCircleOutlineIcon />
+                                                        <FormControlLabel
+                                                            id={modelName}
+                                                            control={<Checkbox onChange={() => toggleAddModelToUse(modelName)} />}
+                                                            label={''}
+                                                        />
+                                                        :
+                                                        <CheckCircleOutlineIcon />
                                                     }
                                                 </TableCell>
                                             </TableRow>
@@ -330,7 +351,7 @@ const Import = () => {
                                 <Button
                                     variant="contained" color="primary" type="submit"
                                     onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
-                                    style={{marginLeft: '30%', width: '40%'}}
+                                    style={{ marginLeft: '30%', width: '40%' }}
                                 >
                                     Upload Images
                                 </Button>
@@ -348,7 +369,7 @@ const Import = () => {
                 </Snackbar>
 
             </div>
-            
+
         </div>
     );
 };
