@@ -29,7 +29,7 @@ const Review = () => {
     const [pageSize, setPageSize] = useState(0);
     const [numImagesTotal, setNumImagesTotal] = useState(0);
     const [modelList, setModelList] = useState({
-        model1: ['a', 'b', 'c'], 
+        sodaDetect: ['has_coke'], 
         model2: ['d', 'e', 'f'],
         bigModel: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
         model3: ['a', 'b', 'c'], 
@@ -147,9 +147,6 @@ const Review = () => {
                     justify="center"
                     direction="row"
                     spacing={2}
-                    style={{
-                        marginBottom: '2em',
-                    }}
                 >
                     <Grid item xs={6}>
                         <ImageInformationCard title="Current Page" description={currentPage} />
@@ -195,26 +192,25 @@ const Review = () => {
                         <Grid
                             item
                             sm={12}
-                            style={{
-                                height: '100vh',
-                                width: '100%'
-                            }}
                         >
-
-                            <DataGrid
-                                page={currentPage}
-                                onPageChange={(params) => {
-                                    setCurrentPage(params.page);
-                                }}
-                                pageSize={pageSize}
-                                rowCount={numImagesTotal}
-                                rows={rows}
-                                columns={columns}
-                                loading={loading}
-                                pagination
-                                paginationMode="server"
-                            />
-
+                            <Card>
+                                <CardContent style={{height: '60vh'}}>
+                                    <DataGrid
+                                        page={currentPage}
+                                        onPageChange={(params) => {
+                                            setCurrentPage(params.page);
+                                        }}
+                                        pageSize={pageSize}
+                                        rowCount={numImagesTotal}
+                                        rows={rows}
+                                        columns={columns}
+                                        loading={loading}
+                                        pagination
+                                        paginationMode="server"
+                                    />
+                                </CardContent>
+                            </Card>
+                            
                         </Grid>
                         :
                         <Grid
@@ -262,9 +258,6 @@ const Review = () => {
                             <TextField label="Search Models" fullWidth></TextField>
                         </Grid>
 
-                        <Grid item xs={2}>
-                            <Button variant='contained' color='primary' size='small'>Clear Selection</Button>
-                        </Grid>
 
                         <Grid item xs={12}><Divider /></Grid>
 

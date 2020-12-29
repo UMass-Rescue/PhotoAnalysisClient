@@ -5,12 +5,12 @@ const api = {
     auth_status: '/auth/status/',  // GET
     auth_profile: '/auth/profile/', // GET
     model_list: '/model/list/', // GET
-    model_predict: '/model/predict', // POST
-    image_result: '/model/results', // GET
-    user_images: '/model/user', // GET
-    api_key_list: '/auth/key', // GET
-    api_key_new: '/auth/key', // POST
-    api_key_remove: '/auth/key' // DELETE
+    model_predict: '/model/predict/', // POST
+    image_result: '/model/results/', // GET
+    user_images: '/model/user/', // GET
+    api_key_list: '/auth/key/', // GET
+    api_key_new: '/auth/key/', // POST
+    api_key_remove: '/auth/key/' // DELETE
 };
 
 

@@ -7,6 +7,11 @@ import { Typography } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(4)
+  },
+  newFooter: {
+    position: 'fixed',
+    bottom: '1em',
+    left: '1em'
   }
 }));
 
@@ -16,17 +21,19 @@ const Footer = props => {
   const classes = useStyles();
 
   return (
-    <footer>
-    <div
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <Typography variant="body1">
-        &copy;{' '}
-        Rescue Lab
-      </Typography>
+    // <div className={classes.newFooter}>
+    //   <div
+    //     {...rest}
+    //     className={clsx(classes.root, className)}
+    //   >
+    //     <Typography variant="body1">
+    //       &copy;{' '} Rescue Lab
+    //     </Typography>
+    //   </div>
+    // </div>
+    <div>
+      
     </div>
-    </footer>
   );
 };
 

@@ -80,8 +80,11 @@ const Import = () => {
     const [allChecked, setAllChecked] = useState(false); // If all models are selected
 
     useEffect(() => {
-        axios.request({ method: 'get', url: baseurl + api['model_list'], headers: { Authorization: 'Bearer ' + Auth.token } })
-            .then((response) => {
+        axios.request({
+                method: 'get', 
+                url: baseurl + api['model_list'], 
+                headers: { Authorization: 'Bearer ' + Auth.token } 
+            }).then((response) => {
                 setModelsAvailable(response.data['models']);
             }, (error) => {
                 console.log('Unable to connect to server or no models available.');
@@ -177,7 +180,7 @@ const Import = () => {
                             alignItems="center"
                             justify="center"
                         >
-                            <Card item sm={12} className={classes.headerGridCard}>
+                            <Card sm={12} className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         1. Add Images
@@ -195,7 +198,7 @@ const Import = () => {
                             alignItems="center"
                             justify="center"
                         >
-                            <Card item sm={12} className={classes.headerGridCard}>
+                            <Card sm={12} className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         2. Choose Models
@@ -213,7 +216,7 @@ const Import = () => {
                             alignItems="center"
                             justify="center"
                         >
-                            <Card item sm={12} className={classes.headerGridCard}>
+                            <Card sm={12} className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         3. Upload for Processing
@@ -278,6 +281,7 @@ const Import = () => {
                                                     <Button
                                                         variant="outlined"
                                                         size='small'
+                                                        type="button"
                                                         disableElevation
                                                         startIcon={<DoneAllIcon />}
                                                         onClick={() => {
@@ -291,6 +295,7 @@ const Import = () => {
                                                     <Button
                                                         variant="outlined"
                                                         size='small'
+                                                        type="button"
                                                         disableElevation
                                                         startIcon={<ClearIcon />}
                                                         onClick={() => {
@@ -348,7 +353,7 @@ const Import = () => {
 
                             <CardContent>
                                 <Button
-                                    variant="contained" color="primary" type="submit"
+                                    variant="contained" color="primary" type="button"
                                     onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
                                     style={{ marginLeft: '30%', width: '40%' }}
                                 >

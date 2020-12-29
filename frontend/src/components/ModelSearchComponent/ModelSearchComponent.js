@@ -92,7 +92,7 @@ function ModelSearchComponent(props) {
                     <ButtonGroup color="primary" aria-label="outlined primary button group">
 
                         {showExpandedView ?
-                            <IconButton onClick={(e) => setShowExpandedView(false)}><ExpandLessIcon /></IconButton>
+                            <IconButton onClick={(e) => {setShowExpandedView(false); setSearchFilter('');}}><ExpandLessIcon /></IconButton>
                         :
                             <IconButton onClick={(e) => setShowExpandedView(true)}><ExpandMoreIcon /></IconButton>
                         }
