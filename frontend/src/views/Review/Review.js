@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     },
     searchField: {
         width: '70%',
-    }
+    },
 }));
 
 
@@ -25,36 +25,22 @@ const Review = () => {
     const classes = useStyles();
 
     // General Image Data from Server
-    const [pagesTotal, setPagesTotal] = useState(0);
-    const [pageSize, setPageSize] = useState(0);
-    const [numImagesTotal, setNumImagesTotal] = useState(0);
-    const [modelList, setModelList] = useState({
-        sodaDetect: ['has_coke'], 
-        model2: ['d', 'e', 'f'],
-        bigModel: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
-        model3: ['a', 'b', 'c'], 
-        model4: ['d', 'e', 'f'],
-        bigModel2: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
-        model5: ['a', 'b', 'c'], 
-        model6: ['d', 'e', 'f'],
-        bigModel3: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
-        model7: ['a', 'b', 'c'], 
-        model8: ['d', 'e', 'f'],
-        bigModel4: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
-        model9: ['a', 'b', 'c'], 
-        model10: ['d', 'e', 'f'],
-        bigModel5: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'],
-    });
+    const [pagesTotal, setPagesTotal] = useState(0); // Number of pages in table
+    const [pageSize, setPageSize] = useState(0); // Number of images on 1 page of table
+    const [numImagesTotal, setNumImagesTotal] = useState(0); // Total images we can see
+    const [modelList, setModelList] = useState({});  // Stores all models we can search by
 
     // Image Result Table
-    const [loading, setLoading] = useState(false);
-    const [rows, setRows] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false); // Loading bar showing in table
+    const [rows, setRows] = useState([]); // Current data being shown in table
+    const [currentPage, setCurrentPage] = useState(1); // Current page of table
 
     // Searching
-    const [generalSearchQuery, setGeneralSearchQuery] = useState('');
-    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
-    const [advancedSearchFilter, setAdvancedSearchFilter] = useState({});
+    const [generalSearchQuery, setGeneralSearchQuery] = useState(''); // String search query
+    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false); // Advanced search dialog open
+    const [advancedSearchFilter, setAdvancedSearchFilter] = useState({}); // Advanced search filter
+    const [usingFilter, setUsingFilter] = useState(false); // If results are filtered currently
+
     const columns = [
         { field: 'file_names', headerName: 'File Names', width: 300 },
         { field: 'users', headerName: 'Users', width: 300 },
@@ -66,24 +52,60 @@ const Review = () => {
         // Get total number of pages of images
         axios.request({
             url: baseurl + api['user_images'],
-            method: 'get',
-            headers: { 'Authorization': 'Bearer ' + Auth.token }
+            method: 'post',
+            params: {'page_id': currentPage.toString()},
+            headers: { 'Authorization': 'Bearer ' + Auth.token}
         }).then((response) => {
             setPagesTotal(response.data['num_pages']);
             setPageSize(response.data['page_size']);
             setNumImagesTotal(response.data['num_images']);
         });
+
+        // Get all available models that we can filter by
+        axios.request({
+            url: baseurl + api['model_result_list'],
+            method: 'get',
+            headers: { 'Authorization': 'Bearer ' + Auth.token }
+        }).then((response) => {
+            setModelList(response.data['models']);
+        });
+
     }, []);
+
+    useEffect(() => {
+        let paramsToSend = {
+            'page_id': currentPage.toString(),
+            'search_filter': JSON.stringify(advancedSearchFilter)
+        };
+        console.log(advancedSearchFilter);
+        axios.request({
+            url: baseurl + api['user_images'],
+            method: 'post',
+            params: paramsToSend,
+            headers: { 'Authorization': 'Bearer ' + Auth.token}
+        }).then((response) => {
+            console.log(response.data)
+        }).catch((error) => {
+            console.log('No');
+        });
+    }, [advancedSearchFilter])
 
     useEffect(() => {
         // Load in the image model data from the server
         setLoading(true);
 
         let imageHashes = [];
+        let paramsToSend = {
+            'page_id': currentPage.toString()
+        };
+        if (advancedSearchFilter) {
+            paramsToSend['search_filter'] = JSON.stringify(advancedSearchFilter);
+        }
         axios.request({
-            url: baseurl + api['user_images'] + '?page_id=' + currentPage.toString(),
-            method: 'get',
-            headers: { 'Authorization': 'Bearer ' + Auth.token }
+            url: baseurl + api['user_images'],
+            method: 'post',
+            params: paramsToSend,
+            headers: { 'Authorization': 'Bearer ' + Auth.token}
         }).then((response) => {
             if (response.data['status'] === 'success') {
                 imageHashes = [...response.data['hashes']];

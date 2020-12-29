@@ -4,9 +4,10 @@ const api = {
     login: '/auth/login/',  // POST
     auth_status: '/auth/status/',  // GET
     auth_profile: '/auth/profile/', // GET
-    model_list: '/model/list/', // GET
+    model_predict_list: '/model/list/', // GET
     model_predict: '/model/predict/', // POST
     image_result: '/model/results/', // GET
+    model_result_list: '/model/all/', // GET
     user_images: '/model/user/', // GET
     api_key_list: '/auth/key/', // GET
     api_key_new: '/auth/key/', // POST

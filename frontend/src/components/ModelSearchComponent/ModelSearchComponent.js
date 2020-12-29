@@ -55,6 +55,17 @@ function ModelSearchComponent(props) {
     }, [searchFilter])
 
 
+    function addAllClassesToUse() {
+        setClassesToUse([...modelClasses]); // Update selected model classes
+        callbackFunction([...modelClasses]); // Send callback to parent
+    }
+
+    function removeAllClassesToUse() {
+        setClassesToUse([]); // Update selected model classes
+        callbackFunction([]); // Send callback to parent
+    }
+
+
     function addClassToUse(modelClass) {
         let newClassList = [...classesToUse];
         newClassList.push(modelClass);
@@ -78,13 +89,13 @@ function ModelSearchComponent(props) {
                     justify="space-between"
                     alignItems="center"
                 >
-                    <Typography variant='h4'>
+                    <Typography variant='h5'>
                         {modelName}
                     </Typography>
 
                     { classesToUse.length > 0 &&
                     <Alert icon={<SearchIcon fontSize="small" />}  severity="error">
-                        Filter Added
+                        Selected
                     </Alert>
                     }
 
@@ -98,13 +109,13 @@ function ModelSearchComponent(props) {
                         }
 
                         {classesToUse.length === 0 &&
-                            <IconButton onClick={(e) => setClassesToUse([...modelClasses])}><RadioButtonUncheckedIcon /></IconButton>
+                            <IconButton onClick={addAllClassesToUse}><RadioButtonUncheckedIcon /></IconButton>
                         }
                         {classesToUse.length > 0 && classesToUse.length < modelClasses.length && 
-                            <IconButton onClick={(e) => setClassesToUse([])}><BlurCircularIcon /></IconButton>
+                            <IconButton onClick={removeAllClassesToUse}><BlurCircularIcon /></IconButton>
                         }
                         {classesToUse.length === modelClasses.length &&
-                            <IconButton onClick={(e) => setClassesToUse([])}><CheckCircleOutlineIcon /></IconButton>
+                            <IconButton onClick={removeAllClassesToUse}><CheckCircleOutlineIcon /></IconButton>
                         }
                     </ButtonGroup>
                 </Grid>

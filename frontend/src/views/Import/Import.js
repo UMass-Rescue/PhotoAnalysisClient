@@ -82,7 +82,7 @@ const Import = () => {
     useEffect(() => {
         axios.request({
                 method: 'get', 
-                url: baseurl + api['model_list'], 
+                url: baseurl + api['model_predict_list'], 
                 headers: { Authorization: 'Bearer ' + Auth.token } 
             }).then((response) => {
                 setModelsAvailable(response.data['models']);
