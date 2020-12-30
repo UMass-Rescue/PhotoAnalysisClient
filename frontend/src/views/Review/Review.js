@@ -21,6 +21,57 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+async function loadRowsFromServer(pageNumber, dataFilter) {
+    
+    // Generate page params and the body
+    let httpRequestDetails = {
+        url: baseurl + api['user_images'],
+        method: 'post',
+        params: { 'page_id': pageNumber.toString() },
+        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+    };
+
+    if (Object.keys(dataFilter).length !== 0) {
+        httpRequestDetails['data'] = { 'searchFilter': dataFilter };
+    }
+
+    // First we request the list of image hashes on this page, then we load the data for those hashes
+    let response = await axios.request(httpRequestDetails);
+
+    console.log(response);
+
+    if (response.data['status'] === 'failure') {
+        console.log('[Error] Unable to load row data.')
+        return []; // Return empty rows if unable to load 
+    }
+
+    let imageHashes = response.data['hashes'];
+        
+    httpRequestDetails = {
+        url: baseurl + api['image_result'],
+        method: 'post',
+        data: imageHashes,
+        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+    }
+    response = await axios.request(httpRequestDetails);
+
+    let newImageData = [];
+
+    response.data.forEach((imageModelResult) => {
+        if (imageModelResult['status'] === 'success') {
+            let rowData = {
+                id: imageModelResult['hash_md5'],
+                hash_md5: imageModelResult['hash_md5'],
+                file_names: imageModelResult['file_names'].join(', '),
+                users: imageModelResult['users'],
+            };
+            newImageData.push(rowData);
+        }
+    });
+    
+    return newImageData;
+}
+
 const Review = () => {
     const classes = useStyles();
 
@@ -33,7 +84,6 @@ const Review = () => {
     // Image Result Table
     const [loading, setLoading] = useState(false); // Loading bar showing in table
     const [rows, setRows] = useState([]); // Current data being shown in table
-    const [currentPage, setCurrentPage] = useState(1); // Current page of table
 
 
     // Searching
@@ -80,12 +130,12 @@ const Review = () => {
         let httpRequestDetails = {
             url: baseurl + api['user_images'],
             method: 'post',
-            params: {'page_id': -1},
-            headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'}
+            params: { 'page_id': -1 },
+            headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
         };
 
         if (Object.keys(advancedSearchFilter).length !== 0) {
-            httpRequestDetails['data'] = {'searchFilter': advancedSearchFilter};
+            httpRequestDetails['data'] = { 'searchFilter': advancedSearchFilter };
         }
 
         // First we request the list of image hashes on this page, then we load the data for those hashes
@@ -94,9 +144,9 @@ const Review = () => {
                 setPagesTotal(response.data['num_pages']);
                 setPageSize(response.data['page_size']);
                 setNumImagesTotal(response.data['num_images']);
-                if (response.data['num_images'] > 0) {
-                    setCurrentPage(1);
-                } 
+                if (response.data['num_pages'] > 0) {
+                    loadRowsFromServerHelper(1);
+                }
             }
         }).catch((error) => {
             if (error.response) {
@@ -113,80 +163,27 @@ const Review = () => {
      *  This will take into account the filters applied from
      *  the basic/advanced search feature.
     **/
-    useEffect(() => {
-        // Display loading circle on the table UI 
+
+    function handlePageChange(datagridParams) {
+        loadRowsFromServerHelper(datagridParams.page);
+    }
+
+    async function loadRowsFromServerHelper(pageNumber) {
         setLoading(true);
-
-        let imageHashes = [];
-
-        // Generate page params and the body
-        let httpRequestDetails = {
-            url: baseurl + api['user_images'],
-            method: 'post',
-            params: {'page_id': currentPage.toString()},
-            headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'}
-        };
-
-        if (Object.keys(advancedSearchFilter).length !== 0) {
-            httpRequestDetails['body'] = {'searchFilter': advancedSearchFilter};
-        }
-
-        // First we request the list of image hashes on this page, then we load the data for those hashes
-        axios.request(httpRequestDetails).then((response) => {
-            if (response.data['status'] === 'success') {
-                imageHashes = [...response.data['hashes']];
-
-                let newImageData = [];
-                axios.request({
-                    url: baseurl + api['image_result'],
-                    method: 'post',
-                    data: imageHashes,
-                    headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'},
-                }).then((response) => {
-
-                    response.data.forEach((imageModelResult) => {
-                        if (imageModelResult['status'] === 'success') {
-                            let rowData = {
-                                id: imageModelResult['hash_md5'],
-                                hash_md5: imageModelResult['hash_md5'],
-                                file_names: imageModelResult['file_names'].join(', '),
-                                users: imageModelResult['users'],
-                            };
-
-                            newImageData.push(rowData);
-                        }
-                    });
-
-
-                    
-                    setRows([...newImageData]);
-                }).catch((error) => {
-                    if (error.response) {
-                        console.log("[Error] Unable to load image model data", error);
-                    } else {
-                        console.log("[Error] Unable to load image model data");
-                    }
-                });
-
-            }
-        }).catch((error) => {  // If unable to connect to server to load image hashes
-            if (error.response) {
-                console.log("[Error] Unable to establish server connection", error.response);
-            } else {
-                console.log("[Error] Unable to establish server connection");
-            }
-        });
+        console.log(advancedSearchFilter);
+        let rows = await loadRowsFromServer(pageNumber, advancedSearchFilter);
+        setRows([...rows]);
         setLoading(false);
-    }, [currentPage, advancedSearchFilter])
+    }
 
     // Helper callback to set search parameters
     function updateSearchFilterFromModelCard(modelName, modelClasses) {
         if (modelClasses.length === 0) {
-            let newClasses = {...advancedSearchFilter};
+            let newClasses = { ...advancedSearchFilter };
             delete newClasses[modelName];
             setAdvancedSearchFilter(newClasses);
         } else {
-            setAdvancedSearchFilter({...advancedSearchFilter, [modelName]: modelClasses});
+            setAdvancedSearchFilter({ ...advancedSearchFilter, [modelName]: modelClasses });
         }
     }
 
@@ -205,9 +202,6 @@ const Review = () => {
                     direction="row"
                     spacing={2}
                 >
-                    <Grid item xs={6}>
-                        <ImageInformationCard title="Current Page" description={currentPage} />
-                    </Grid>
 
                     <Grid item xs={6}>
                         <ImageInformationCard title="Number of Images" description={numImagesTotal} />
@@ -218,18 +212,18 @@ const Review = () => {
                             <CardContent>
                                 <Grid justify="space-between" container spacing={3} alignItems="center">
                                     <Grid item xs={8}>
-                                        <TextField 
-                                            variant="outlined" 
-                                            fullWidth={true} 
+                                        <TextField
+                                            variant="outlined"
+                                            fullWidth={true}
                                             label='Search Image and Model Data'
-                                            onChange={(e) => {setGeneralSearchQuery(e.target.value)}}
+                                            onChange={(e) => { setGeneralSearchQuery(e.target.value) }}
                                         ></TextField>
                                     </Grid>
                                     <Grid item xs={4}>
 
                                         <ButtonGroup size='large'>
                                             <Button color='secondary' variant='contained'>Search</Button>
-            
+
                                             <Button
                                                 color='primary'
                                                 variant='contained'
@@ -238,7 +232,7 @@ const Review = () => {
                                                 Advanced
                                             </Button>
                                         </ButtonGroup>
-                                        
+
                                     </Grid>
                                 </Grid>
                             </CardContent>
@@ -251,10 +245,9 @@ const Review = () => {
                             sm={12}
                         >
                             <Card>
-                                <CardContent style={{height: '60vh'}}>
+                                <CardContent style={{ height: '60vh' }}>
                                     <DataGrid
-                                        page={currentPage}
-                                        onPageChange={(params) => {setCurrentPage(params.page)}}
+                                        onPageChange={handlePageChange}
                                         pageSize={pageSize}
                                         rowCount={numImagesTotal}
                                         rows={rows}
@@ -265,7 +258,7 @@ const Review = () => {
                                     />
                                 </CardContent>
                             </Card>
-                            
+
                         </Grid>
                         :
                         <Grid
@@ -291,11 +284,11 @@ const Review = () => {
                 onClose={() => setAdvancedSearchOpen(false)}
                 aria-labelledby="form-dialog-title"
                 fullWidth={true}
-                maxWidth = {'lg'}
+                maxWidth={'lg'}
             >
                 <DialogTitle id="form-dialog-title">Advanced Search</DialogTitle>
-                <DialogContent 
-                    style={{height: '80vh', overflow: 'auto'}}
+                <DialogContent
+                    style={{ height: '80vh', overflow: 'auto' }}
                 >
 
                     <Grid
@@ -318,16 +311,16 @@ const Review = () => {
 
                         <Grid item xs={12}><Divider /></Grid>
 
-                        {Object.keys(modelList).map( (modelName) => (
+                        {Object.keys(modelList).map((modelName) => (
                             <Grid item xs={4} key={modelName}>
-                                <ModelSearchComponent 
+                                <ModelSearchComponent
                                     modelName={modelName}
                                     modelClasses={modelList[modelName]}
                                     onClassSelect={(classList) => updateSearchFilterFromModelCard(modelName, classList)}
-                                /> 
+                                />
                             </Grid>
                         ))}
-                        
+
 
 
                     </Grid>
