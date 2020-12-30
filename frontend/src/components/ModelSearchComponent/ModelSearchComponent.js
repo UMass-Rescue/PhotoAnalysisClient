@@ -37,6 +37,10 @@ function ModelSearchComponent(props) {
     useEffect(() => {
         // On page load display all models
         setClassesToDisplay([...modelClasses]);
+        console.log(props.initialState);
+        if (props.initialState.length > 0) {
+            setClassesToUse([...props.initialState]);
+        }
 
         // Model classes is a constant, don't check it
         // eslint-disable-next-line react-hooks/exhaustive-deps

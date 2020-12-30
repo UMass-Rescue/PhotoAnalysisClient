@@ -38,8 +38,6 @@ async function loadRowsFromServer(pageNumber, dataFilter) {
     // First we request the list of image hashes on this page, then we load the data for those hashes
     let response = await axios.request(httpRequestDetails);
 
-    console.log(response);
-
     if (response.data['status'] === 'failure') {
         console.log('[Error] Unable to load row data.')
         return []; // Return empty rows if unable to load 
@@ -170,7 +168,6 @@ const Review = () => {
 
     async function loadRowsFromServerHelper(pageNumber) {
         setLoading(true);
-        console.log(advancedSearchFilter);
         let rows = await loadRowsFromServer(pageNumber, advancedSearchFilter);
         setRows([...rows]);
         setLoading(false);
@@ -313,9 +310,11 @@ const Review = () => {
 
                         {Object.keys(modelList).map((modelName) => (
                             <Grid item xs={4} key={modelName}>
+                                {console.log(advancedSearchFilter[modelName])}
                                 <ModelSearchComponent
                                     modelName={modelName}
                                     modelClasses={modelList[modelName]}
+                                    initialState={advancedSearchFilter[modelName] !== undefined ? advancedSearchFilter[modelName] : []}
                                     onClassSelect={(classList) => updateSearchFilterFromModelCard(modelName, classList)}
                                 />
                             </Grid>
@@ -326,11 +325,8 @@ const Review = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setAdvancedSearchOpen(false)} color="primary" variant='contained'>
-                        Cancel
-                    </Button>
-                    <Button color="secondary" variant={'contained'}>
-                        Search
+                    <Button color="secondary" variant={'contained'} onClick={() => setAdvancedSearchOpen(false)}>
+                        Return to Results
                     </Button>
                 </DialogActions>
             </Dialog>
