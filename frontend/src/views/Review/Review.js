@@ -35,12 +35,13 @@ const Review = () => {
     const [rows, setRows] = useState([]); // Current data being shown in table
     const [currentPage, setCurrentPage] = useState(1); // Current page of table
 
+
     // Searching
     const [generalSearchQuery, setGeneralSearchQuery] = useState(''); // String search query
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false); // Advanced search dialog open
     const [advancedSearchFilter, setAdvancedSearchFilter] = useState({}); // Advanced search filter
-    const [usingFilter, setUsingFilter] = useState(false); // If results are filtered currently
 
+    // Table columns
     const columns = [
         { field: 'file_names', headerName: 'File Names', width: 300 },
         { field: 'users', headerName: 'Users', width: 300 },
@@ -49,17 +50,6 @@ const Review = () => {
 
     // This will run initially on page load
     useEffect(() => {
-        // Get total number of pages of images
-        axios.request({
-            url: baseurl + api['user_images'],
-            method: 'post',
-            params: {'page_id': currentPage.toString()},
-            headers: { 'Authorization': 'Bearer ' + Auth.token}
-        }).then((response) => {
-            setPagesTotal(response.data['num_pages']);
-            setPageSize(response.data['page_size']);
-            setNumImagesTotal(response.data['num_images']);
-        });
 
         // Get all available models that we can filter by
         axios.request({
@@ -68,60 +58,90 @@ const Review = () => {
             headers: { 'Authorization': 'Bearer ' + Auth.token }
         }).then((response) => {
             setModelList(response.data['models']);
-        });
+        }).catch((error) => {
+            if (error.response) {
+                console.log("[Error] Initial model list load failure", error);
+            } else {
+                console.log("[Error] Initial model list load failure");
+            }
+        })
 
     }, []);
 
+    // When we change the filter being used, we should reload the images that
+    // are available with the filter applied
     useEffect(() => {
-        let paramsToSend = {
-            'page_id': currentPage.toString(),
-            'search_filter': JSON.stringify(advancedSearchFilter)
-        };
-        console.log(advancedSearchFilter);
-        axios.request({
+
+        /* ------------------------------------
+        *  Loads the details on available images into client.
+        *  This will take into account the filters applied from
+        *  the basic/advanced search feature.
+        **/
+        let httpRequestDetails = {
             url: baseurl + api['user_images'],
             method: 'post',
-            params: paramsToSend,
-            headers: { 'Authorization': 'Bearer ' + Auth.token}
-        }).then((response) => {
-            console.log(response.data)
+            params: {'page_id': -1},
+            headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'}
+        };
+
+        if (Object.keys(advancedSearchFilter).length !== 0) {
+            httpRequestDetails['data'] = {'searchFilter': advancedSearchFilter};
+        }
+
+        // First we request the list of image hashes on this page, then we load the data for those hashes
+        axios.request(httpRequestDetails).then((response) => {
+            if (response.data['status'] === 'success') {
+                setPagesTotal(response.data['num_pages']);
+                setPageSize(response.data['page_size']);
+                setNumImagesTotal(response.data['num_images']);
+                if (response.data['num_images'] > 0) {
+                    setCurrentPage(1);
+                } 
+            }
         }).catch((error) => {
-            console.log('No');
+            if (error.response) {
+                console.log("[Error] Image data detail load failure", error);
+            } else {
+                console.log("[Error] Image data detail load failure");
+            }
         });
     }, [advancedSearchFilter])
 
+
+    /* ------------------------------------
+     *  Loads a page into the table.
+     *  This will take into account the filters applied from
+     *  the basic/advanced search feature.
+    **/
     useEffect(() => {
-        // Load in the image model data from the server
+        // Display loading circle on the table UI 
         setLoading(true);
 
         let imageHashes = [];
-        let paramsToSend = {
-            'page_id': currentPage.toString()
-        };
-        if (advancedSearchFilter) {
-            paramsToSend['search_filter'] = JSON.stringify(advancedSearchFilter);
-        }
-        axios.request({
+
+        // Generate page params and the body
+        let httpRequestDetails = {
             url: baseurl + api['user_images'],
             method: 'post',
-            params: paramsToSend,
-            headers: { 'Authorization': 'Bearer ' + Auth.token}
-        }).then((response) => {
+            params: {'page_id': currentPage.toString()},
+            headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'}
+        };
+
+        if (Object.keys(advancedSearchFilter).length !== 0) {
+            httpRequestDetails['body'] = {'searchFilter': advancedSearchFilter};
+        }
+
+        // First we request the list of image hashes on this page, then we load the data for those hashes
+        axios.request(httpRequestDetails).then((response) => {
             if (response.data['status'] === 'success') {
                 imageHashes = [...response.data['hashes']];
 
-                let imageListHeaders = {
-                    'Authorization': 'Bearer ' + Auth.token,
-                    'content-type': 'application/json',
-                }
-
                 let newImageData = [];
-
                 axios.request({
                     url: baseurl + api['image_result'],
                     method: 'post',
                     data: imageHashes,
-                    headers: imageListHeaders,
+                    headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json'},
                 }).then((response) => {
 
                     response.data.forEach((imageModelResult) => {
@@ -136,25 +156,40 @@ const Review = () => {
                             newImageData.push(rowData);
                         }
                     });
+
+
+                    
                     setRows([...newImageData]);
                 }).catch((error) => {
                     if (error.response) {
-                        console.log(error);
+                        console.log("[Error] Unable to load image model data", error);
                     } else {
-                        console.log('ERROR: Unable to load image model data.');
+                        console.log("[Error] Unable to load image model data");
                     }
                 });
 
             }
-        }).catch((error) => {
+        }).catch((error) => {  // If unable to connect to server to load image hashes
             if (error.response) {
-                console.log(error.response);
+                console.log("[Error] Unable to establish server connection", error.response);
             } else {
-                console.log('Unable to connect to server to load images.');
+                console.log("[Error] Unable to establish server connection");
             }
         });
         setLoading(false);
-    }, [currentPage]);
+    }, [currentPage, advancedSearchFilter])
+
+    // Helper callback to set search parameters
+    function updateSearchFilterFromModelCard(modelName, modelClasses) {
+        if (modelClasses.length === 0) {
+            let newClasses = {...advancedSearchFilter};
+            delete newClasses[modelName];
+            setAdvancedSearchFilter(newClasses);
+        } else {
+            setAdvancedSearchFilter({...advancedSearchFilter, [modelName]: modelClasses});
+        }
+    }
+
 
     return (
         <div className={classes.root}>
@@ -219,9 +254,7 @@ const Review = () => {
                                 <CardContent style={{height: '60vh'}}>
                                     <DataGrid
                                         page={currentPage}
-                                        onPageChange={(params) => {
-                                            setCurrentPage(params.page);
-                                        }}
+                                        onPageChange={(params) => {setCurrentPage(params.page)}}
                                         pageSize={pageSize}
                                         rowCount={numImagesTotal}
                                         rows={rows}
@@ -261,7 +294,9 @@ const Review = () => {
                 maxWidth = {'lg'}
             >
                 <DialogTitle id="form-dialog-title">Advanced Search</DialogTitle>
-                <DialogContent style={{height: '80vh', overflow: 'auto'}}>
+                <DialogContent 
+                    style={{height: '80vh', overflow: 'auto'}}
+                >
 
                     <Grid
                         container
@@ -288,7 +323,7 @@ const Review = () => {
                                 <ModelSearchComponent 
                                     modelName={modelName}
                                     modelClasses={modelList[modelName]}
-                                    onClassSelect={(classList) => setAdvancedSearchFilter({...advancedSearchFilter, [modelName]: classList})}
+                                    onClassSelect={(classList) => updateSearchFilterFromModelCard(modelName, classList)}
                                 /> 
                             </Grid>
                         ))}

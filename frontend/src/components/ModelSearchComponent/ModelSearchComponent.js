@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { ButtonGroup, Grid, IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
+import { ButtonGroup, Grid, Button, List, ListItem, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
@@ -103,19 +103,19 @@ function ModelSearchComponent(props) {
                     <ButtonGroup color="primary" aria-label="outlined primary button group">
 
                         {showExpandedView ?
-                            <IconButton onClick={(e) => {setShowExpandedView(false); setSearchFilter('');}}><ExpandLessIcon /></IconButton>
+                            <Button onClick={(e) => {setShowExpandedView(false); setSearchFilter('');}}><ExpandLessIcon /></Button>
                         :
-                            <IconButton onClick={(e) => setShowExpandedView(true)}><ExpandMoreIcon /></IconButton>
+                            <Button onClick={(e) => setShowExpandedView(true)}><ExpandMoreIcon /></Button>
                         }
 
                         {classesToUse.length === 0 &&
-                            <IconButton onClick={addAllClassesToUse}><RadioButtonUncheckedIcon /></IconButton>
+                            <Button onClick={addAllClassesToUse}><RadioButtonUncheckedIcon /></Button>
                         }
                         {classesToUse.length > 0 && classesToUse.length < modelClasses.length && 
-                            <IconButton onClick={removeAllClassesToUse}><BlurCircularIcon /></IconButton>
+                            <Button onClick={removeAllClassesToUse}><BlurCircularIcon /></Button>
                         }
                         {classesToUse.length === modelClasses.length &&
-                            <IconButton onClick={removeAllClassesToUse}><CheckCircleOutlineIcon /></IconButton>
+                            <Button onClick={removeAllClassesToUse}><CheckCircleOutlineIcon /></Button>
                         }
                     </ButtonGroup>
                 </Grid>
@@ -137,9 +137,9 @@ function ModelSearchComponent(props) {
                                 <ListItemText>{modelClass}</ListItemText>
                                 <ListItemSecondaryAction>
                                     {classesToUse.includes(modelClass) ?
-                                        <IconButton edge="end" onClick={(e) => removeClassToUse(modelClass)}><CheckCircleOutlineIcon /></IconButton>
+                                        <Button edge="end" onClick={(e) => removeClassToUse(modelClass)}><CheckCircleOutlineIcon /></Button>
                                     :
-                                        <IconButton edge="end" onClick={(e) => addClassToUse(modelClass)}><RadioButtonUncheckedIcon /></IconButton>
+                                        <Button edge="end" onClick={(e) => addClassToUse(modelClass)}><RadioButtonUncheckedIcon /></Button>
                                     }
                                 </ListItemSecondaryAction>
                         </ListItem>
