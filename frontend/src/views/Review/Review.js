@@ -5,6 +5,7 @@ import { Button, ButtonGroup, Card, CardContent, Dialog, DialogActions, DialogCo
 import { api, Auth, baseurl } from 'api';
 import { DataGrid } from '@material-ui/data-grid';
 import ModelSearchComponent from 'components/ModelSearchComponent/ModelSearchComponent';
+import FileSaver from 'file-saver';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -103,6 +104,41 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
     return newImageData;
 }
 
+
+async function downloadImageHashesFromServer(dataFilter, searchString) {
+    let httpRequestDetails = {
+        url: baseurl + api['search_image_download'],
+        method: 'post',
+        params: {},
+        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+    };
+
+    if (Object.keys(dataFilter).length !== 0) {
+        httpRequestDetails['data'] = { 'search_filter': dataFilter };
+    }
+
+    if (searchString.length > 0) {
+        httpRequestDetails['params']['search_string'] = searchString;
+    }
+
+    let response = await axios.request(httpRequestDetails);
+
+    if (response.data['status'] === 'success') {
+        let hashes = response.data['hashes'];
+        console.log(hashes);
+
+        let csvData = 'Image MD5 Hash\n'
+
+        hashes.forEach( (hash) => {
+            csvData += hash + '\n';
+        });
+
+        var blob = new Blob([csvData], {type: "text/csv;charset=utf-8"});
+        FileSaver.saveAs(blob, "Search Results.csv");
+          
+    }
+}
+
 const Review = () => {
     const classes = useStyles();
 
@@ -122,6 +158,7 @@ const Review = () => {
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false); // Advanced search dialog open
     const [advancedSearchFilter, setAdvancedSearchFilter] = useState({}); // Advanced search filter
     const [usingSearchFilter, setUsingSearchFilter] = useState(false);
+
 
     // Table columns
     const columns = [
@@ -224,6 +261,7 @@ const Review = () => {
     }
 
 
+
     return (
         <div className={classes.root}>
             <Grid
@@ -269,7 +307,7 @@ const Review = () => {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Button color="secondary" variant="contained" fullWidth>
+                                    <Button color="secondary" variant="contained" fullWidth onClick={() => downloadImageHashesFromServer(advancedSearchFilter, generalSearchQuery)}>
                                         Download Hashes
                                     </Button>
                                 </Grid>
