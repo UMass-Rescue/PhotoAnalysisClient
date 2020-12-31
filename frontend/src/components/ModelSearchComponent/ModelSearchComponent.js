@@ -37,7 +37,6 @@ function ModelSearchComponent(props) {
     useEffect(() => {
         // On page load display all models
         setClassesToDisplay([...modelClasses]);
-        console.log(props.initialState);
         if (props.initialState.length > 0) {
             setClassesToUse([...props.initialState]);
         }
@@ -97,8 +96,9 @@ function ModelSearchComponent(props) {
                         {modelName}
                     </Typography>
 
+                    {/* Display notice that this model card is selected */}
                     { classesToUse.length > 0 &&
-                    <Alert icon={<SearchIcon fontSize="small" />}  severity="error">
+                    <Alert icon={<SearchIcon style={{fontSize: '20px'}} />} style={{padding: '0.1em', paddingRight: '0.5em', paddingLeft: '0.5em'}} severity="error">
                         Selected
                     </Alert>
                     }

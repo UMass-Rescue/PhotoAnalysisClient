@@ -8,7 +8,7 @@ const api = {
     model_predict: '/model/predict/', // POST
     image_result: '/model/results/', // GET
     model_result_list: '/model/all/', // GET
-    user_images: '/model/user/', // GET
+    search_images: '/model/search/', // GET
     api_key_list: '/auth/key/', // GET
     api_key_new: '/auth/key/', // POST
     api_key_remove: '/auth/key/' // DELETE
