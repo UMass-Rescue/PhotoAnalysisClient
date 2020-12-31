@@ -125,7 +125,6 @@ async function downloadImageHashesFromServer(dataFilter, searchString) {
 
     if (response.data['status'] === 'success') {
         let hashes = response.data['hashes'];
-        console.log(hashes);
 
         let csvData = 'Image MD5 Hash\n'
 
