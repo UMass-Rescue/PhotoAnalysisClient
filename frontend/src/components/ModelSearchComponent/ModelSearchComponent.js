@@ -49,7 +49,7 @@ function ModelSearchComponent(props) {
         // Update the classes with the search filter
         if (searchFilter.length > 0) {
             let newClassList = [...modelClasses];
-            newClassList = newClassList.filter(modelClassName => modelClassName.includes(searchFilter));
+            newClassList = newClassList.filter(modelClassName => modelClassName.toLowerCase().includes(searchFilter.toLowerCase()));
             setClassesToDisplay(newClassList);
         } else {
             setClassesToDisplay(modelClasses);

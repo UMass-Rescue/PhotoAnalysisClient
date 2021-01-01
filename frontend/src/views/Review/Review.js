@@ -52,7 +52,7 @@ async function loadImageDataFromServer(dataFilter, searchString) {
 
 
 async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
-    
+
     // Generate page params and the body
     let httpRequestDetails = {
         url: baseurl + api['search_images'],
@@ -78,7 +78,7 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
     }
 
     let imageHashes = response.data['hashes'];
-        
+
     httpRequestDetails = {
         url: baseurl + api['image_result'],
         method: 'post',
@@ -100,7 +100,7 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
             newImageData.push(rowData);
         }
     });
-    
+
     return newImageData;
 }
 
@@ -128,13 +128,13 @@ async function downloadImageHashesFromServer(dataFilter, searchString) {
 
         let csvData = 'Image MD5 Hash\n'
 
-        hashes.forEach( (hash) => {
+        hashes.forEach((hash) => {
             csvData += hash + '\n';
         });
 
-        var blob = new Blob([csvData], {type: "text/csv;charset=utf-8"});
+        var blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
         FileSaver.saveAs(blob, "Search Results.csv");
-          
+
     }
 }
 
@@ -153,7 +153,9 @@ const Review = () => {
 
 
     // Searching
+    const [searchTextfieldValue, setSearchTextfieldValue] = useState(''); // String search query before being saved
     const [generalSearchQuery, setGeneralSearchQuery] = useState(''); // String search query
+    const [modelSearchQuery, setModelSearchQuery] = useState(''); // String search query
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false); // Advanced search dialog open
     const [advancedSearchFilter, setAdvancedSearchFilter] = useState({}); // Advanced search filter
     const [usingSearchFilter, setUsingSearchFilter] = useState(false);
@@ -178,7 +180,7 @@ const Review = () => {
         }
         imageLoadHelper();
 
-        
+
 
         // Get all available models that we can filter by
         axios.request({
@@ -200,9 +202,11 @@ const Review = () => {
     // When we change the filter being used, we should reload the images that
     // are available with the filter applied
     async function runSearch() {
-       
-        let response = await loadImageDataFromServer(advancedSearchFilter, generalSearchQuery);
-        
+
+
+        let response = await loadImageDataFromServer(advancedSearchFilter, searchTextfieldValue);
+
+        setGeneralSearchQuery(searchTextfieldValue);
         setUsingSearchFilter(true);
         setAdvancedSearchOpen(false);
         setPagesTotal(response.data['num_pages']);
@@ -225,7 +229,7 @@ const Review = () => {
      *  This will take into account the filters applied from
      *  the basic/advanced search feature.
     **/
-   const loadRowsFromServerHelper = useCallback( (pageNumber) => {
+    const loadRowsFromServerHelper = useCallback((pageNumber) => {
 
         async function loadRows() {
             let rows;
@@ -280,7 +284,7 @@ const Review = () => {
                         <Card>
                             <CardContent className={classes.headerRow}>
                                 <Typography gutterBottom>
-                                    Number of Images 
+                                    Number of Images
                                 </Typography>
                                 <Typography variant="h5">
                                     {numImagesTotal}
@@ -291,35 +295,37 @@ const Review = () => {
 
                     <Grid item xs={6}>
                         <Card className={classes.headerRow}>
-                            
+
                             {usingSearchFilter ?
-                            <div>
-                            <CardContent>
-                                <Typography gutterBottom>
-                                    Search Filter Applied 
-                                </Typography> 
-                            </CardContent>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <Button color="primary" variant="contained" fullWidth onClick={clearSearch}>
-                                            Clear Filter
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Button color="secondary" variant="contained" fullWidth onClick={() => downloadImageHashesFromServer(advancedSearchFilter, generalSearchQuery)}>
-                                        Download Hashes
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                            </div>
-                            :
-                            <CardContent>
-                                <Typography gutterBottom>
-                                    Viewing All Images 
-                                </Typography> 
-                            </CardContent>   
+                                <div>
+                                    <CardContent>
+                                        <Typography gutterBottom>
+                                            Search Filter Applied
+                                        </Typography>
+
+                                        <Grid container>
+                                            <Grid item xs={6}>
+                                                <Button color="primary" variant="contained" fullWidth onClick={clearSearch}>
+                                                    Clear Filter
+                                                </Button>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Button color="secondary" variant="contained" fullWidth onClick={() => downloadImageHashesFromServer(advancedSearchFilter, generalSearchQuery)}>
+                                                    Download Hashes
+                                                </Button>
+                                            </Grid>
+
+                                        </Grid>
+                                    </CardContent>
+                                </div>
+                                :
+                                <CardContent>
+                                    <Typography gutterBottom>
+                                        Viewing All Images
+                                </Typography>
+                                </CardContent>
                             }
-                              
+
                         </Card>
                     </Grid>
 
@@ -333,7 +339,7 @@ const Review = () => {
                                             fullWidth={true}
                                             label='Search Image and Model Data'
                                             defaultValue={generalSearchQuery}
-                                            onChange={(e) => { setGeneralSearchQuery(e.target.value) }}
+                                            onChange={(e) => { setSearchTextfieldValue(e.target.value); }}
                                         ></TextField>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -342,7 +348,7 @@ const Review = () => {
                                             <Button
                                                 color='primary'
                                                 variant='contained'
-                                                onClick={() => setAdvancedSearchOpen(true)}
+                                                onClick={() => { setAdvancedSearchOpen(true); }}
                                             >
                                                 Advanced
                                             </Button>
@@ -382,13 +388,13 @@ const Review = () => {
                             <Card>
                                 <CardContent style={{ height: '60vh' }}>
                                     <Grid
-                                    container
-                                    spacing={0}
-                                    direction="column"
-                                    alignItems="center"
-                                    justify="center"
+                                        container
+                                        spacing={0}
+                                        direction="column"
+                                        alignItems="center"
+                                        justify="center"
                                     >
-                                        <Grid item xs={6} style={{marginTop:'5vh'}}>
+                                        <Grid item xs={6} style={{ marginTop: '5vh' }}>
                                             <Typography variant="h2" color={'error'} >
                                                 No Images Available.
                                             </Typography>
@@ -397,7 +403,7 @@ const Review = () => {
                                     </Grid>
                                 </CardContent>
                             </Card>
-                        </Grid>   
+                        </Grid>
                     }
                 </Grid>
             </Grid>
@@ -421,27 +427,17 @@ const Review = () => {
                         justify="center"
                     >
 
-                        <Grid item xs={8}>
-                            <TextField 
-                                label="General Search" 
-                                variant='outlined' 
-                                fullWidth={true} 
-                                defaultValue={generalSearchQuery}
-                                onChange={(e) => { setGeneralSearchQuery(e.target.value) }}
-                            >
-                            </TextField>
-                        </Grid>
-
                         <Grid item xs={12}><Divider /></Grid>
 
                         <Grid item xs={4}>
-                            <TextField label="Search Models" fullWidth></TextField>
+                            <TextField label="Search Models" fullWidth defaultValue={modelSearchQuery} onChange={(e) => setModelSearchQuery(e.target.value)}></TextField>
                         </Grid>
 
 
                         <Grid item xs={12}><Divider /></Grid>
 
                         {Object.keys(modelList).map((modelName) => (
+                            modelName.toLowerCase().includes(modelSearchQuery.toLowerCase()) &&
                             <Grid item xs={4} key={modelName}>
                                 <ModelSearchComponent
                                     modelName={modelName}
@@ -457,7 +453,7 @@ const Review = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                <Button color="primary" variant={'contained'} onClick={() => setAdvancedSearchOpen(false)}>
+                    <Button color="primary" variant={'contained'} onClick={() => setAdvancedSearchOpen(false)}>
                         Cancel
                     </Button>
                     <Button color="secondary" variant={'contained'} onClick={runSearch}>
