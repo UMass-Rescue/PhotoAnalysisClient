@@ -203,7 +203,6 @@ const Review = () => {
     // are available with the filter applied
     async function runSearch() {
 
-
         let response = await loadImageDataFromServer(advancedSearchFilter, searchTextfieldValue);
 
         setGeneralSearchQuery(searchTextfieldValue);
