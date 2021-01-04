@@ -63,8 +63,11 @@ const Home = () => {
     }, []);
 
     function getAPIKeys() {
-        Axios.request({ method: 'get', url: baseurl + api['api_key_list'], headers: { Authorization: 'Bearer ' + Auth.token } })
-        .then((response) => {
+        Axios.request({ 
+            method: 'get', 
+            url: baseurl + api['api_key_list'] + '?nocache=' + new Date().getTime(), 
+            headers: { Authorization: 'Bearer ' + Auth.token } }
+        ).then((response) => {
             setApiKeys(response.data['keys']);
         }, (error) => {
             console.log('Unable to load API keys.');
