@@ -20,22 +20,24 @@ let Auth = {
     return [];
   },
 
-  validateCredentials() {
+  async validateCredentials() {
     if (!Auth.isAuthenticated) {
       return false;
     }
 
-    axios.request({
-      method: 'get',
-      url: baseurl + api['auth_status'],
-      headers: { Authorization: 'Bearer ' + Auth.token}
-    }).then((response) => {
+    try {
+      await axios.request({
+        method: 'get',
+        url: baseurl + api['auth_status'],
+        headers: { Authorization: 'Bearer ' + Auth.token}
+      });
+      Auth.isAuthenticated = true;
       return true;
-    }).catch((error) => {
+
+    } catch (e) {
       Auth.logout();
       return false;
-    });
-
+    }
   },
   logout() {
     Auth.isAuthenticated = false;
