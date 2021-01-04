@@ -10,7 +10,7 @@ import FileSaver from 'file-saver';
 const useStyles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(4),
-        overflowX: 'hidden',
+        // overflowX: 'hidden',
     },
     reviewTable: {
         backgroundColor: 'white'
@@ -279,11 +279,15 @@ const Review = () => {
                     spacing={2}
                 >
 
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <Card>
                             <CardContent className={classes.headerRow}>
                                 <Typography gutterBottom>
-                                    Number of Images
+                                    {usingSearchFilter ?
+                                        <Typography variant='body1' component='span'>Images Matching Query</Typography>
+                                    :
+                                        <Typography variant='body1' component='span'>Images Total</Typography>  
+                                    }            
                                 </Typography>
                                 <Typography variant="h5">
                                     {numImagesTotal}
@@ -292,7 +296,7 @@ const Review = () => {
                         </Card>
                     </Grid>
 
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <Card className={classes.headerRow}>
 
                             {usingSearchFilter ?
@@ -332,7 +336,7 @@ const Review = () => {
                         <Card>
                             <CardContent>
                                 <Grid justify="space-between" container spacing={3} alignItems="center">
-                                    <Grid item xs={8}>
+                                    <Grid item xs={12} md={8}>
                                         <TextField
                                             variant="outlined"
                                             fullWidth={true}
@@ -341,7 +345,7 @@ const Review = () => {
                                             onChange={(e) => { setSearchTextfieldValue(e.target.value); }}
                                         ></TextField>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={12} md={4}>
 
                                         <ButtonGroup size='large'>
                                             <Button
@@ -364,7 +368,7 @@ const Review = () => {
                     {pagesTotal > 0 ?
                         <Grid
                             item
-                            sm={12}
+                            xs={12}
                         >
                             <Card>
                                 <CardContent style={{ height: '60vh' }}>

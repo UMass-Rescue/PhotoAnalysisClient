@@ -7,7 +7,8 @@ import {
     Button,
     Checkbox,
     FormControlLabel,
-    CardContent
+    CardContent,
+    Box
 } from '@material-ui/core';
 import ImageDropzone from "../../components/ImageDropzone/ImageDropzone";
 import Card from "@material-ui/core/Card";
@@ -60,9 +61,10 @@ const useStyles = makeStyles(theme => ({
     },
     uploadButtonContainer: {
         width: '100%',
-        height: '15vh',
-        paddingTop: '2vh',
+        maxHeight: '55vh',
         borderRadius: '0.6em',
+        paddingBottom: '3vh',
+        paddingTop: '3vh'
     },
     headerGridCard: {
         width: '100%'
@@ -166,21 +168,15 @@ const Import = () => {
             <ImageDropzone filelistfunction={addFilesToUpload} />
 
             <div style={{ marginTop: '1em' }}>
-                <Grid
-                    container
-                    spacing={2}
-                    display="flex"
-                >
+                <Box display={{xs: 'none', md: 'block'}}>
+                    <Grid
+                        container
+                        spacing={2}
+                    >
 
-                    {/*Header Card: Images*/}
-                    <Grid item md={4} >
-                        <Grid
-                            container
-                            spacing={0}
-                            alignItems="center"
-                            justify="center"
-                        >
-                            <Card sm={12} className={classes.headerGridCard}>
+                        {/*Header Card: Images*/}
+                        <Grid item md={4}>
+                            <Card className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         1. Add Images
@@ -188,17 +184,10 @@ const Import = () => {
                                 </CardContent>
                             </Card>
                         </Grid>
-                    </Grid>
 
-                    {/*Header Card: Models*/}
-                    <Grid item md={4} >
-                        <Grid
-                            container
-                            spacing={0}
-                            alignItems="center"
-                            justify="center"
-                        >
-                            <Card sm={12} className={classes.headerGridCard}>
+                        {/*Header Card: Models*/}
+                        <Grid item md={4} >
+                            <Card className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         2. Choose Models
@@ -206,17 +195,10 @@ const Import = () => {
                                 </CardContent>
                             </Card>
                         </Grid>
-                    </Grid>
 
-                    {/*Header Card: Upload*/}
-                    <Grid item md={4} >
-                        <Grid
-                            container
-                            spacing={0}
-                            alignItems="center"
-                            justify="center"
-                        >
-                            <Card sm={12} className={classes.headerGridCard}>
+                        {/*Header Card: Upload*/}
+                        <Grid item md={4} >
+                            <Card className={classes.headerGridCard}>
                                 <CardContent>
                                     <Typography variant="h3">
                                         3. Upload for Processing
@@ -224,10 +206,17 @@ const Import = () => {
                                 </CardContent>
                             </Card>
                         </Grid>
-                    </Grid>
+
+                        </Grid>
+                </Box>
+                <Grid
+                container
+                spacing={2}
+                display="flex"
+                >
 
                     {/*Review Images*/}
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                         <Card className={classes.imageListContainer}>
                             <CardContent>
                                 <Typography variant="h5" style={{ marginBottom: '1em' }}>
@@ -266,7 +255,7 @@ const Import = () => {
                     </Grid>
 
                     {/*Select Models*/}
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                         <Card className={classes.modelSelectorContainer}>
                             <CardContent>
                                 <Grid justify="space-between" container>
@@ -346,18 +335,15 @@ const Import = () => {
                     </Grid>
 
                     {/* Upload Images*/}
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                         <Card className={classes.uploadButtonContainer}>
-
-
-
                             <CardContent>
                                 <Button
                                     variant="contained" color="primary" type="button"
                                     onClick={uploadImages} disabled={filesToUpload.length === 0 || modelsToUse.length === 0}
-                                    style={{ marginLeft: '30%', width: '40%' }}
+                                    style={{ marginLeft: '30%', width: '40%'}}
                                 >
-                                    Upload Images
+                                    Upload
                                 </Button>
                             </CardContent>
                         </Card>

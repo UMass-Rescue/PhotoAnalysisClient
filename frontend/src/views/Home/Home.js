@@ -125,7 +125,7 @@ const Home = () => {
                 justify="center"
             >
 
-                <Grid item md={4}>
+                <Grid item xs={12} md={6}>
                     <Card className={classes.apiKeyListContainer}>
                         <CardContent>
                         <Grid justify="space-between" container>
@@ -199,12 +199,12 @@ const Home = () => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={4} className={classes.loginGrid2}>
+                <Grid item xs={12} md={6} className={classes.loginGrid2}>
                     <Typography variant="h2">
                         Home
                     </Typography>
                 </Grid>
-                <Grid item xs={4} className={classes.loginGrid1}>
+                <Grid xs={12} md={6} className={classes.loginGrid1}>
 
                 </Grid>
 
