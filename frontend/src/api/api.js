@@ -12,7 +12,10 @@ const api = {
     search_image_download: '/model/search/download', // POST
     api_key_list: '/auth/key', // GET
     api_key_new: '/auth/key', // POST
-    api_key_remove: '/auth/key' // DELETE
+    api_key_remove: '/auth/key', // DELETE
+    training_statistics: '/training/detail',  // GET
+    training_result: '/training/result',  // GET
+    all_training_results: '/training/results',  // GET
 };
 
 

@@ -343,7 +343,7 @@ const Review = () => {
                                             label='Search Image and Model Data'
                                             defaultValue={generalSearchQuery}
                                             onChange={(e) => { setSearchTextfieldValue(e.target.value); }}
-                                        ></TextField>
+                                        />
                                     </Grid>
                                     <Grid item xs={12} md={4}>
 

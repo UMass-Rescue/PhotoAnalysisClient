@@ -215,7 +215,7 @@ const Import = () => {
                 display="flex"
                 >
 
-                    {/*Review Images*/}
+                    {/*Train Images*/}
                     <Grid item xs={12} md={4}>
                         <Card className={classes.imageListContainer}>
                             <CardContent>
@@ -243,7 +243,6 @@ const Import = () => {
                                                         ) ||
                                                             <RemoveIcon />
                                                         }
-
                                                     </TableCell>
                                                 </TableRow>
                                             ))}

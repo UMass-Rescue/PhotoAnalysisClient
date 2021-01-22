@@ -9,7 +9,8 @@ import {
     Review as ReviewView,
     NotFound as NotFoundView,
     Login as LoginView,
-    Home as HomeView
+    Home as HomeView,
+    Train as TrainView
 } from './views';
 
 
@@ -17,6 +18,7 @@ export const routePermissions = {
     home: ['*'],
     import: ['admin', 'investigator', 'researcher'],
     review: ['admin', 'investigator', 'researcher'],
+    train: ['admin', 'investigator', 'researcher']
 }
 
 
@@ -58,6 +60,14 @@ const Routes = () => {
                 useAuth={true}
                 permissions={routePermissions['review']}
                 path="/review"
+            />
+            <RouteWithLayout
+                component={TrainView}
+                exact
+                layout={MainLayout}
+                useAuth={true}
+                permissions={routePermissions['train']}
+                path="/train"
             />
             <RouteWithLayout
                 component={NotFoundView}
