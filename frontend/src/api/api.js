@@ -16,6 +16,7 @@ const api = {
     training_statistics: '/training/detail',  // GET
     training_result: '/training/result',  // GET
     all_training_results: '/training/results',  // GET
+    download_trained_model: '/training/model',  // GET
 };
 
 

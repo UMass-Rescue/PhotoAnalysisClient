@@ -166,6 +166,24 @@ const Train = () => {
         });
     }
 
+    function downloadTrainedModel(training_id) {
+        console.log('Downloading');
+        axios.request({
+            method: 'get',
+            url: baseurl + api['download_trained_model'],
+            headers: {Authorization: 'Bearer ' + Auth.token},
+            params: {training_id: training_id},
+            responseType: "blob"
+        }).then((response) => {
+            console.log('Response');
+            let blob = new Blob([response.data], { type: 'application/octet-stream' })
+            FileSaver.saveAs(blob, "Trained Model "+training_id+".zip");
+        }, (error) => {
+            console.log(error);
+        });
+    }
+
+
     return (
         <div className={classes.root}>
             <Grid
@@ -182,7 +200,7 @@ const Train = () => {
                                         Pending Jobs
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={1} alignContent='flex-end'>
+                                <Grid item xs={1}>
                                     <Typography gutterBottom variant="h2" component="h2"
                                                 color={pending === -1 ? 'primary' : 'inherit'}>
                                         {pending}
@@ -202,7 +220,7 @@ const Train = () => {
                                         Completed Jobs
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={1} alignContent='flex-end'>
+                                <Grid item xs={1} >
                                     <Typography gutterBottom variant="h2" component="h2"
                                                 color={finished === -1 ? 'primary' : 'inherit'}>
                                         {finished}
@@ -300,6 +318,9 @@ const Train = () => {
                                         <TableCell>Validation Accuracy</TableCell>
                                         <TableCell>Training Loss</TableCell>
                                         <TableCell>Validation Loss</TableCell>
+                                        {Auth.getRoles().includes('admin') &&
+                                            <TableCell>Trained Model</TableCell>
+                                        }
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -331,7 +352,7 @@ const Train = () => {
                                             <TableCell>
                                                 {trainingObject['complete'] ?
                                                     <Typography variant={'body1'} component={'p'}>
-                                                        {trainingObject['training_accuracy']}
+                                                        {trainingObject['training_accuracy'].toFixed(4)}
                                                     </Typography>
                                                     :
                                                     <Typography variant={'body1'} component={'p'}>
@@ -342,7 +363,7 @@ const Train = () => {
                                             <TableCell>
                                                 {trainingObject['complete'] ?
                                                     <Typography variant={'body1'} component={'p'}>
-                                                        {trainingObject['validation_accuracy']}
+                                                        {trainingObject['validation_accuracy'].toFixed(4)}
                                                     </Typography>
                                                     :
                                                     <Typography variant={'body1'} component={'p'}>
@@ -353,7 +374,7 @@ const Train = () => {
                                             <TableCell>
                                                 {trainingObject['complete'] ?
                                                     <Typography variant={'body1'} component={'p'}>
-                                                        {trainingObject['training_loss']}
+                                                        {trainingObject['training_loss'].toFixed(4)}
                                                     </Typography>
                                                     :
                                                     <Typography variant={'body1'} component={'p'}>
@@ -364,7 +385,7 @@ const Train = () => {
                                             <TableCell>
                                                 {trainingObject['complete'] ?
                                                     <Typography variant={'body1'} component={'p'}>
-                                                        {trainingObject['validation_loss']}
+                                                        {trainingObject['validation_loss'].toFixed(4)}
                                                     </Typography>
                                                     :
                                                     <Typography variant={'body1'} component={'p'}>
@@ -372,6 +393,27 @@ const Train = () => {
                                                     </Typography>
                                                 }
                                             </TableCell>
+                                            {Auth.getRoles().includes('admin') &&
+                                            <TableCell>
+                                                {trainingObject['save'] ?
+                                                    (trainingObject['complete'] ?
+                                                            <Button color='secondary' variant='contained' size='small'
+                                                                    onClick={() => downloadTrainedModel(trainingObject['training_id'])}>
+                                                                Download
+                                                            </Button>
+                                                            :
+                                                            <Button color='secondary' variant='contained' size='small'
+                                                                    disabled>
+                                                                Download
+                                                            </Button>
+                                                    )
+                                                    :
+                                                    <Typography variant={'body1'} component={'p'}>
+                                                        Not Saved
+                                                    </Typography>
+                                                }
+                                            </TableCell>
+                                            }
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -444,7 +486,7 @@ const Train = () => {
                                         <Grid item xs={7}>
                                             <Typography variant={'body1'} component={'p'}>
                                             {searchedJob['complete'] ?
-                                                searchedJob['training_accuracy'] : '...'
+                                                searchedJob['training_accuracy'].toFixed(4) : '...'
                                             }
                                             </Typography>
                                         </Grid>
@@ -457,7 +499,7 @@ const Train = () => {
                                         <Grid item xs={7}>
                                             <Typography variant={'body1'} component={'p'}>
                                                 {searchedJob['complete'] ?
-                                                    searchedJob['validation_accuracy'] : '...'
+                                                    searchedJob['validation_accuracy'].toFixed(4) : '...'
                                                 }
                                             </Typography>
                                         </Grid>
@@ -470,7 +512,7 @@ const Train = () => {
                                         <Grid item xs={7}>
                                             <Typography variant={'body1'} component={'p'}>
                                                 {searchedJob['complete'] ?
-                                                    searchedJob['training_loss'] : '...'
+                                                    searchedJob['training_loss'].toFixed(4) : '...'
                                                 }
                                             </Typography>
                                         </Grid>
@@ -483,10 +525,40 @@ const Train = () => {
                                         <Grid item xs={7}>
                                             <Typography variant={'body1'} component={'p'}>
                                                 {searchedJob['complete'] ?
-                                                    searchedJob['validation_loss'] : '...'
+                                                    searchedJob['validation_loss'].toFixed(4) : '...'
                                                 }
                                             </Typography>
                                         </Grid>
+
+                                        {Auth.getRoles().includes('admin') &&
+                                        <Grid item xs={5}>
+                                            <Typography gutterBottom variant="h5" component="h2">
+                                                Trained Model Files
+                                            </Typography>
+                                        </Grid>
+                                        }
+
+                                        {Auth.getRoles().includes('admin') &&
+                                        <Grid item xs={7}>
+                                            {searchedJob['save'] ?
+                                                (searchedJob['complete'] ?
+                                                    <Button color='secondary' variant='contained' size='small'
+                                                            onClick={() => downloadTrainedModel(searchedJob['training_id'])}>
+                                                        Download
+                                                    </Button>
+                                                    :
+                                                    <Button color='secondary' variant='contained' size='small'
+                                                            disabled>
+                                                        Download
+                                                    </Button>
+                                                )
+                                                :
+                                                <Typography variant={'body1'} component={'p'}>
+                                                    Not Saved
+                                                </Typography>
+                                            }
+                                        </Grid>
+                                        }
 
 
                                     </Grid>
