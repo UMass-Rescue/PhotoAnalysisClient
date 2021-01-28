@@ -204,7 +204,7 @@ const Home = () => {
                         Home
                     </Typography>
                 </Grid>
-                <Grid xs={12} md={6} className={classes.loginGrid1}>
+                <Grid item xs={12} md={6} className={classes.loginGrid1}>
 
                 </Grid>
 
@@ -225,23 +225,21 @@ const Home = () => {
                     onChange={(e) => setNewKeyDetail(e.target.value)}
                     fullWidth={true}
                 />
+
                 <TextField
                     id="standard-select-currency-native"
                     select
-                    label="Microservice"
                     fullWidth={true}
                     value={newKeyType}
                     onChange={(e) => setNewKeyType(e.target.value)}
+                    style={{marginTop: '1em'}}
                     helperText="Please Select Microservice"
                 >
                     <MenuItem key='predict' value={'predict_microservice'}>
                         Prediction
                     </MenuItem>
                     <MenuItem key='train' value={'train_microservice'}>
-                        Training
-                    </MenuItem>
-                    <MenuItem key='data' value={'dataset_microservice'}>
-                        Dataset
+                        Dataset and Training
                     </MenuItem>
                 </TextField>
                 </DialogContent>

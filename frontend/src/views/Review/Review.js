@@ -221,6 +221,7 @@ const Review = () => {
         setNumImagesTotal(response.data['num_images']);
         setUsingSearchFilter(false);
         setGeneralSearchQuery('');
+        setAdvancedSearchFilter([]);
     }
 
     /* ------------------------------------

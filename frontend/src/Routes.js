@@ -16,9 +16,9 @@ import {
 
 export const routePermissions = {
     home: ['*'],
-    import: ['admin', 'investigator', 'researcher'],
-    review: ['admin', 'investigator', 'researcher'],
-    train: ['admin', 'investigator', 'researcher']
+    import: ['admin', 'investigator'],
+    review: ['admin', 'investigator'],
+    train: ['admin', 'researcher']
 }
 
 
