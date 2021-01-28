@@ -27,10 +27,10 @@ const useStyles = makeStyles(theme => ({
         paddingTop: '20vh',
     },
     loginGrid1: {
-        backgroundColor: 'black',
+        // backgroundColor: 'black',
     },
     loginGrid2: {
-        backgroundColor: 'red',
+        // backgroundColor: 'red',
     },
     apiKeyListContainer: {
         width: '100%',
@@ -126,7 +126,8 @@ const Home = () => {
             >
 
                 <Grid item xs={12} md={6}>
-                    <Card className={classes.apiKeyListContainer}>
+                    {(Auth.getRoles().includes('admin') || Auth.getRoles().includes('researcher')) &&
+                        <Card className={classes.apiKeyListContainer}>
                         <CardContent>
                         <Grid justify="space-between" container>
                             
@@ -197,12 +198,11 @@ const Home = () => {
                             </TableContainer>
                         </CardContent>
                     </Card>
+                    }
                 </Grid>
 
                 <Grid item xs={12} md={6} className={classes.loginGrid2}>
-                    <Typography variant="h2">
-                        Home
-                    </Typography>
+
                 </Grid>
                 <Grid item xs={12} md={6} className={classes.loginGrid1}>
 
