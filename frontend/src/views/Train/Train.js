@@ -98,7 +98,7 @@ const Train = () => {
             case 1:
                 return (
                     <Typography variant='subtitle1' component='p'>
-                        Using the <a target='_blank' rel='noreferrer' href='https://www.pypi.org/'>CitadelML Python
+                        Using the <a target='_blank' rel='noreferrer' href='https://pypi.org/project/CitadelML/'>CitadelML Python
                         Library</a>, call
                         upload_model(), and then provide the model and desired hyperparameters. You will be given a
                         unique ID to track
