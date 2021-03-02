@@ -237,11 +237,15 @@ const Import = () => {
                                                     <TableCell component="th" scope="row">
                                                         {fileObject.name}
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell style={{justifyContent: 'center'}}>
                                                         {(filesUploaded.includes(fileObject.name) &&
-                                                            <CheckCircleOutlineIcon />
+                                                            <IconButton aria-label="check"  size="small" disabled style={{color: 'green'}} className={classes.uploadedButton} >
+                                                                <CheckCircleOutlineIcon />
+                                                            </IconButton>
                                                         ) ||
-                                                            <RemoveIcon />
+                                                            <IconButton aria-label="delete"  size="small" onClick={() => { handleRemoveImage(fileObject.name) }}>
+                                                              <DeleteIcon />
+                                                            </IconButton>
                                                         }
                                                     </TableCell>
                                                 </TableRow>

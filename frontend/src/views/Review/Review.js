@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/styles';
-import { Button, ButtonGroup, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, TextField, Typography } from '@material-ui/core';
+import { Button, ButtonGroup, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, TextField, Typography, Box } from '@material-ui/core';
 import { api, Auth, baseurl } from 'api';
 import { DataGrid } from '@material-ui/data-grid';
 import ModelSearchComponent from 'components/ModelSearchComponent/ModelSearchComponent';
 import FileSaver from 'file-saver';
+import Chip from "@material-ui/core/Chip";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -96,6 +98,7 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
                 hash_md5: imageModelResult['hash_md5'],
                 file_names: imageModelResult['file_names'].join(', '),
                 users: imageModelResult['users'],
+                tags: imageModelResult['tags'],
             };
             newImageData.push(rowData);
         }
@@ -105,42 +108,43 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
 }
 
 
-async function downloadImageHashesFromServer(dataFilter, searchString) {
-    let httpRequestDetails = {
-        url: baseurl + api['search_image_download'],
-        method: 'post',
-        params: {},
-        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
-    };
+// async function downloadImageHashesFromServer(dataFilter, searchString) {
+//     let httpRequestDetails = {
+//         url: baseurl + api['search_image_download'],
+//         method: 'post',
+//         params: {},
+//         headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+//     };
 
-    if (Object.keys(dataFilter).length !== 0) {
-        httpRequestDetails['data'] = { 'search_filter': dataFilter };
-    }
+//     if (Object.keys(dataFilter).length !== 0) {
+//         httpRequestDetails['data'] = { 'search_filter': dataFilter };
+//     }
 
-    if (searchString.length > 0) {
-        httpRequestDetails['params']['search_string'] = searchString;
-    }
+//     if (searchString.length > 0) {
+//         httpRequestDetails['params']['search_string'] = searchString;
+//     }
 
-    let response = await axios.request(httpRequestDetails);
+//     let response = await axios.request(httpRequestDetails);
 
-    if (response.data['status'] === 'success') {
-        let hashes = response.data['hashes'];
+//     if (response.data['status'] === 'success') {
+//         let hashes = response.data['hashes'];
 
-        let csvData = 'Image MD5 Hash\n'
+//         let csvData = 'Image MD5 Hash\n'
 
-        hashes.forEach((hash) => {
-            csvData += hash + '\n';
-        });
+//         hashes.forEach((hash) => {
+//             csvData += hash + '\n';
+//         });
 
-        var blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
-        FileSaver.saveAs(blob, "Search Results.csv");
+//         var blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+//         FileSaver.saveAs(blob, "Search Results.csv");
 
-    }
-}
+//     }
+// }
 
 const Review = () => {
     const classes = useStyles();
-
+    const maxTagShown = 4; // maximum number of tags thhat can be shown
+ 
     // General Image Data from Server
     const [pagesTotal, setPagesTotal] = useState(0); // Number of pages in table
     const [pageSize, setPageSize] = useState(0); // Number of images on 1 page of table
@@ -160,11 +164,102 @@ const Review = () => {
     const [advancedSearchFilter, setAdvancedSearchFilter] = useState({}); // Advanced search filter
     const [usingSearchFilter, setUsingSearchFilter] = useState(false);
 
+    const [tagsDialogOpen, setTagDialogOpen] = useState(false); // Tag dialog open
+    const [tagsInDialog, setTagsInDialog] = useState([]); // Current data being shown in table
+    const [dataInDialog, setDataInDialog] = useState({}); // Current data being shown in table
+    const [tempTagsInDialog, setTempTagsInDialog] = useState([]); // Current data being shown in table
+
+    // On RowSelected, open a popup for adding tags
+    function handleRowSelected(param: GridRowSelectedParams) {
+        console.log(param)
+        // param.data
+        const tags = param.data.tags.toString();
+        if(tags !== "") {
+            setTagsInDialog(tags.split(','));
+        } else {
+            setTagsInDialog([]);
+        }
+        setTempTagsInDialog(tagsInDialog)
+        setTagDialogOpen(true);
+        setDataInDialog(param.data)
+    }
+
+    // Save tags from Dialog
+    function saveTags() {
+        // send updated tags to database
+        console.log(tempTagsInDialog)
+
+        const result = rows.find((e) => e.hash_md5 === dataInDialog.hash_md5)
+        result.tags = tempTagsInDialog
+
+        setTagDialogOpen(false)
+
+        // Call update tags API
+    }
+
+    // save tags to temporary list
+    function handleTagsChanged(values) {
+        // Stored temp tags
+        // tempTags = values
+        setTempTagsInDialog(values)
+    }
+
+
+    const tagsAutoComplete = [
+        {value: "Coke"},
+        {value: "Cat"}
+    ] // Strings for tags autocomplete, should load from Database in the future
+
+
+    // Download CSV file from the data shown in the table
+    function downloadDataAsCSV() {
+        let csvData = 'Image MD5 Hash, Filenames, Tags\n'
+
+        for(let i=0; i < rows.length; i++){
+
+            const t = (typeof rows[i].tags[0] !== "undefined")?rows[i].tags[0]:""
+            csvData += rows[i].hash_md5 + ',"' + rows[i].file_names + '","' + t + '"\n'
+        }
+
+        var blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+        FileSaver.saveAs(blob, "Search Results.csv");
+    }
 
     // Table columns
-    const columns = [
+    const columns: ColDef[]  = [
         { field: 'file_names', headerName: 'File Names', width: 300 },
-        { field: 'users', headerName: 'Users', width: 300 },
+        { field: 'users', headerName: 'Users', width: 200 },
+        { 
+            field: 'tags', 
+            headerName: 'Tags', 
+            width: 300, 
+            sortable: false,
+            renderCell: (params: CellParams) => (
+                <div>
+                {
+                    params.value.toString().split(',').splice(0,maxTagShown).map((tag, index) => (
+                        tag !== ""
+                        ? index < maxTagShown-1
+                        ? (<Chip
+                          color="secondary"
+                          variant="default"
+                          label={tag}
+                          key={index}
+                        />)
+                        : (<Chip
+                          color="secondary"
+                          variant="default"
+                          label={"+" + (params.value.toString().split(',').length - index).toString()}
+                          key={index}
+                        />)
+                        : <div key={index}></div>
+                  ))
+                }
+                </div>
+            )
+
+
+        },
         { field: 'hash_md5', headerName: 'MD5 Hash', width: 250, sortable: false },
     ];
 
@@ -208,6 +303,7 @@ const Review = () => {
         setGeneralSearchQuery(searchTextfieldValue);
         setUsingSearchFilter(true);
         setAdvancedSearchOpen(false);
+        setTagDialogOpen(false);
         setPagesTotal(response.data['num_pages']);
         setPageSize(response.data['page_size']);
         setNumImagesTotal(response.data['num_images']);
@@ -264,7 +360,6 @@ const Review = () => {
     }
 
 
-
     return (
         <div className={classes.root}>
             <Grid
@@ -314,7 +409,7 @@ const Review = () => {
                                                 </Button>
                                             </Grid>
                                             <Grid item xs={6}>
-                                                <Button color="secondary" variant="contained" fullWidth onClick={() => downloadImageHashesFromServer(advancedSearchFilter, generalSearchQuery)}>
+                                                <Button color="secondary" variant="contained" fullWidth onClick={() => downloadDataAsCSV()}>
                                                     Download Hashes
                                                 </Button>
                                             </Grid>
@@ -382,6 +477,7 @@ const Review = () => {
                                         loading={loading}
                                         pagination
                                         paginationMode="server"
+                                        onRowSelected={handleRowSelected}
                                     />
                                 </CardContent>
                             </Card>
@@ -462,6 +558,95 @@ const Review = () => {
                     </Button>
                     <Button color="secondary" variant={'contained'} onClick={runSearch}>
                         Search
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
+            <Dialog
+                open={tagsDialogOpen}
+                onClose={() => setTagDialogOpen(false)}
+                aria-labelledby="form-dialog-title"
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle id="form-dialog-title">Edit Tags</DialogTitle>
+                <DialogContent
+                    style={{ height: '30vh', overflow: 'auto' }}
+                >
+
+                    <Grid
+                        container
+                        spacing={3}
+                        display="flex"
+                        justify="center"
+                    >
+
+                        <Grid item xs={12}><Divider /></Grid>
+
+                        <Grid item xs={10}>
+                            <Typography component={'span'} display="inline" >
+                            <Box display="flex" flexDirection="row" bgcolor="background.paper">
+                                <Box p={1}  fontWeight="fontWeightBold">
+                                  Hash:
+                                </Box>
+                                <Box p={1}  fontWeight="fontWeightRegular">
+                                  {dataInDialog.hash_md5}
+                                </Box>
+                              </Box>
+                              <Box display="flex" flexDirection="row" bgcolor="background.paper">
+                                <Box p={1}  fontWeight="fontWeightBold">
+                                  File Names:
+                                </Box>
+                                <Box p={1}  fontWeight="fontWeightRegular">
+                                  {dataInDialog.file_names}
+                                </Box>
+                              </Box>
+                               
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}><Divider /></Grid>
+
+                        <Grid item xs={10}>
+                            <Autocomplete
+                                multiple
+                                id="tags-filled"
+                                options={tagsAutoComplete.map((option) => option.value)}
+                                defaultValue={tagsInDialog}
+                                freeSolo
+                                renderTags={(value, getTagProps) =>
+                                  value.map((option, index) => (
+                                    <Chip
+                                      color="secondary"
+                                      variant="default"
+                                      label={option}
+                                      {...getTagProps({ index })}
+                                    />
+                                  ))
+                                }
+                                onChange={ (event, values) => handleTagsChanged(values) }                                          
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    label="Tags"
+                                    placeholder="Add more tags here"
+                                  />
+                                )}
+                              />
+                        </Grid>
+
+
+
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" variant={'contained'} onClick={() => setTagDialogOpen(false)}>
+                        Cancel
+                    </Button>
+                    <Button color="secondary" variant={'contained'} onClick={saveTags}>
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>
