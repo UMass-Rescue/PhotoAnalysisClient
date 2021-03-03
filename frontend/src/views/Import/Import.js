@@ -8,7 +8,8 @@ import {
     Checkbox,
     FormControlLabel,
     CardContent,
-    Box
+    Box,
+    Chip
 } from '@material-ui/core';
 import ImageDropzone from "../../components/ImageDropzone/ImageDropzone";
 import Card from "@material-ui/core/Card";
@@ -77,6 +78,7 @@ const Import = () => {
     const [filesToUpload, setFilesToUpload] = useState([]); // Files to be uploaded to photoanalysisserver
     const [filesUploaded, setFilesUploaded] = useState([]); // Files successfully uploaded to server
     const [modelsAvailable, setModelsAvailable] = useState([]);  // Models available from the photoanalysisserver
+    const [modelsTags, setModelsTags] = useState({});  // Models tags from the photoanalysisserver
     const [modelsToUse, setModelsToUse] = useState([]);  // Models for the photoanalysisserver to use on uploads
     const [open, setOpen] = useState(false); // Handles state of image upload snackbar
     const [allChecked, setAllChecked] = useState(false); // If all models are selected
@@ -92,6 +94,25 @@ const Import = () => {
                 console.log('Unable to connect to server or no models available.');
             });
     }, []);
+
+    /* This imports the model tags from the HTTP get and then divides the list by comma*/
+    useEffect(() => {
+        axios.request({
+                method: 'get', 
+                url: baseurl + api['model_tag_list'], 
+                headers: { Authorization: 'Bearer ' + Auth.token } 
+            }).then((response) => {
+                // HTTP GET returns an array with the dictionary
+                for (const tagItem in response.data['tags']) {
+                    // Loop through all items in the dictionary, split the strings by comma into lists
+                    response.data['tags'][tagItem] = response.data['tags'][tagItem].split(",");
+                };
+                setModelsTags(response.data['tags']);
+            }, (error) => {
+                console.log('Unable to connect to server or no models available.');
+            });
+    }, []);
+
 
 
     function addFilesToUpload(files) {
@@ -110,6 +131,7 @@ const Import = () => {
             setModelsToUse(newModels);
         }
     }
+
 
 
     function uploadImages() {
@@ -305,6 +327,7 @@ const Import = () => {
                                         <TableRow>
                                             <TableCell>Model</TableCell>
                                             <TableCell>Selected</TableCell>
+                                            <TableCell>Tags</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -323,6 +346,12 @@ const Import = () => {
                                                         :
                                                         <CheckCircleOutlineIcon />
                                                     }
+                                                </TableCell>
+                                                <TableCell>
+                                                    {/*Find tags by modelname and print*/}
+                                                    {modelsTags[modelName] && modelsTags[modelName].map((tags, index) => (
+                                                        <Chip label = {tags} key={index}/>
+                                                    ))}
                                                 </TableCell>
                                             </TableRow>
                                         ))}

@@ -7,6 +7,7 @@ import {ImportExport, Dashboard, Home as HomeIcon } from '@material-ui/icons';
 import { SidebarNav, Profile } from './components';
 import { routePermissions } from 'Routes';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import PieChartIcon from '@material-ui/icons/PieChart';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -60,6 +61,12 @@ const Sidebar = props => {
       href: '/train',
       permissions: routePermissions['train'],
       icon: <BarChartIcon />
+    },
+    {
+      title: 'Graphs',
+      href: '/graphs',
+      permissions: routePermissions['graphs'],
+      icon: <PieChartIcon />
     }
   ];
 

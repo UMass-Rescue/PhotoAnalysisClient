@@ -10,7 +10,8 @@ import {
     NotFound as NotFoundView,
     Login as LoginView,
     Home as HomeView,
-    Train as TrainView
+    Train as TrainView,
+    Graphs as GraphsView
 } from './views';
 
 
@@ -18,7 +19,8 @@ export const routePermissions = {
     home: ['*'],
     import: ['admin', 'investigator'],
     review: ['admin', 'investigator'],
-    train: ['admin', 'researcher']
+    train: ['admin', 'researcher'],
+    graphs: ['*']
 }
 
 
@@ -68,6 +70,14 @@ const Routes = () => {
                 useAuth={true}
                 permissions={routePermissions['train']}
                 path="/train"
+            />
+            <RouteWithLayout
+                component={GraphsView}
+                exact
+                layout={MainLayout}
+                useAuth={true}
+                permissions={routePermissions['graphs']}
+                path="/graphs"
             />
             <RouteWithLayout
                 component={NotFoundView}
