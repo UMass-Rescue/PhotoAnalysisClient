@@ -108,6 +108,30 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
 }
 
 
+async function updateImageTags(image_hash, tags) {
+    // remove this after connect to the backend
+    return true
+
+    // Generate page params and the body
+    let httpRequestDetails = {
+        url: baseurl + api['update_tag'],
+        method: 'post',
+        params: { 'hash_id': image_hash, 'tags': tags, 'user': Auth.user },
+        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+    };
+
+    // First we request the list of image hashes on this page, then we load the data for those hashes
+    let response = await axios.request(httpRequestDetails);
+
+    if (response.data['status'] === 'success') {
+        return true;
+    }
+    console.log('[Error] Failed to update tags.')
+    return false; // Return empty rows if unable to load 
+    
+}
+
+
 // async function downloadImageHashesFromServer(dataFilter, searchString) {
 //     let httpRequestDetails = {
 //         url: baseurl + api['search_image_download'],
@@ -185,22 +209,27 @@ const Review = () => {
     }
 
     // Save tags from Dialog
-    function saveTags() {
+    async function saveTags() {
         // send updated tags to database
         console.log(tempTagsInDialog)
 
-        const result = rows.find((e) => e.hash_md5 === dataInDialog.hash_md5)
-        result.tags = tempTagsInDialog
+        // Call update tags API
+        const isSuccess = await updateImageTags(dataInDialog.hash_md5, tempTagsInDialog);
+        if(isSuccess) {
+            // successfully updated to the backend, thhen update the UI.
+            const result = rows.find((e) => e.hash_md5 === dataInDialog.hash_md5)
+            result.tags = tempTagsInDialog
+        } else {
+            console.log("Update tags failed.")
+        }
 
         setTagDialogOpen(false)
 
-        // Call update tags API
     }
 
     // save tags to temporary list
     function handleTagsChanged(values) {
-        // Stored temp tags
-        // tempTags = values
+        // Stored temp tags for upload to server later
         setTempTagsInDialog(values)
     }
 
@@ -208,10 +237,10 @@ const Review = () => {
     const tagsAutoComplete = [
         {value: "Coke"},
         {value: "Cat"}
-    ] // Strings for tags autocomplete, should load from Database in the future
+    ] // Strings for tags autocomplete, this should not be a static list, it should load from Database in the future
 
 
-    // Download CSV file from the data shown in the table
+    // Export the data shown on the table to a CSV file
     function downloadDataAsCSV() {
         let csvData = 'Image MD5 Hash, Filenames, Tags\n'
 
@@ -237,6 +266,7 @@ const Review = () => {
             renderCell: (params: CellParams) => (
                 <div>
                 {
+                    // need to fix this after the backend is connected, now it somehow stores array in string
                     params.value.toString().split(',').splice(0,maxTagShown).map((tag, index) => (
                         tag !== ""
                         ? index < maxTagShown-1
@@ -410,7 +440,7 @@ const Review = () => {
                                             </Grid>
                                             <Grid item xs={6}>
                                                 <Button color="secondary" variant="contained" fullWidth onClick={() => downloadDataAsCSV()}>
-                                                    Download Hashes
+                                                    Download Data
                                                 </Button>
                                             </Grid>
 
@@ -439,6 +469,7 @@ const Review = () => {
                                             label='Search Image and Model Data'
                                             defaultValue={generalSearchQuery}
                                             onChange={(e) => { setSearchTextfieldValue(e.target.value); }}
+                                            onKeyPress={(e) => { (e.key === 'Enter')?runSearch():void 0; }}
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={4}>
