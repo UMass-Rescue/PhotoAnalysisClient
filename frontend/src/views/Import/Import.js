@@ -17,13 +17,14 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import RemoveIcon from '@material-ui/icons/Remove';
 import TableHead from "@material-ui/core/TableHead";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import TableContainer from "@material-ui/core/TableContainer";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ClearIcon from '@material-ui/icons/Clear';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { api, Auth, baseurl } from 'api';
 
 const useStyles = makeStyles(theme => ({
@@ -161,6 +162,12 @@ const Import = () => {
         setOpen(false);
     };
 
+    
+    function handleRemoveImage(filename) {
+        const newList = filesToUpload.filter((item) => item.name !== filename);
+        setFilesToUpload(newList);
+    }
+
 
     return (
         <div className={classes.root}>
@@ -237,11 +244,15 @@ const Import = () => {
                                                     <TableCell component="th" scope="row">
                                                         {fileObject.name}
                                                     </TableCell>
-                                                    <TableCell>
+                                                    <TableCell style={{justifyContent: 'center'}}>
                                                         {(filesUploaded.includes(fileObject.name) &&
-                                                            <CheckCircleOutlineIcon />
+                                                            <IconButton aria-label="check"  size="small" disabled style={{color: 'green'}} className={classes.uploadedButton} >
+                                                                <CheckCircleOutlineIcon />
+                                                            </IconButton>
                                                         ) ||
-                                                            <RemoveIcon />
+                                                            <IconButton aria-label="delete"  size="small" onClick={() => { handleRemoveImage(fileObject.name) }}>
+                                                              <DeleteIcon />
+                                                            </IconButton>
                                                         }
                                                     </TableCell>
                                                 </TableRow>

@@ -27,7 +27,8 @@
     "@material-ui/icons": "^4.2.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.2.1",
-    "axios": "^0.19.2",
+    "ajv-errors": "^1.0.1",
+    "axios": "^0.21.1",
     "clsx": "^1.0.4",
     "file-saver": "^2.0.5",
     "fontsource-roboto": "^3.0.3",
@@ -40,7 +41,7 @@
     "react-hook-form": "^6.2.0",
     "react-perfect-scrollbar": "^1.5.3",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "4.0.0"
+    "react-scripts": "^4.0.0"
   },
   "scripts": {
     "init": "npm install && pip install -r ../backend/requirements.txt",
