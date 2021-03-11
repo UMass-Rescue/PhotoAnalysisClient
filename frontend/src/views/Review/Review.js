@@ -107,27 +107,42 @@ async function loadRowsFromServer(pageNumber, dataFilter, searchString) {
     return newImageData;
 }
 
-
+/* ------------------------------------
+*  Update tags for an image with an input hash
+*  Return true, if success.  Otherwise, return false.
+**/
 async function updateImageTags(image_hash, tags) {
-    // remove this after connect to the backend
-    return true
 
-    // Generate page params and the body
+    // set body message
+    const md5_hashes = [image_hash]
+    const post_data = {
+        "md5_hashes": md5_hashes,
+        "new_tags": tags
+    }
+
+    // setup config
+    const config = {
+        'Authorization': 'Bearer ' + Auth.token,
+        'content-type': 'application/json',
+    };
+
+    // create http request details
     let httpRequestDetails = {
         url: baseurl + api['update_tag'],
         method: 'post',
-        params: { 'hash_id': image_hash, 'tags': tags, 'user': Auth.user },
-        headers: { 'Authorization': 'Bearer ' + Auth.token, 'content-type': 'application/json' }
+        data: post_data,
+        params: {"username": Auth.user["username"] },
+        headers: config
     };
 
-    // First we request the list of image hashes on this page, then we load the data for those hashes
+    // send request to update the tags
     let response = await axios.request(httpRequestDetails);
 
-    if (response.data['status'] === 'success') {
+    if (response.data[0]['status'] === 'success') {
         return true;
     }
     console.log('[Error] Failed to update tags.')
-    return false; // Return empty rows if unable to load 
+    return false; // fail to update tags
     
 }
 
@@ -195,7 +210,7 @@ const Review = () => {
 
     // On RowSelected, open a popup for adding tags
     function handleRowSelected(param: GridRowSelectedParams) {
-        console.log(param)
+        // console.log(param)
         // param.data
         const tags = param.data.tags.toString();
         if(tags !== "") {
@@ -211,7 +226,7 @@ const Review = () => {
     // Save tags from Dialog
     async function saveTags() {
         // send updated tags to database
-        console.log(tempTagsInDialog)
+        // console.log(tempTagsInDialog)
 
         // Call update tags API
         const isSuccess = await updateImageTags(dataInDialog.hash_md5, tempTagsInDialog);
@@ -266,7 +281,7 @@ const Review = () => {
             renderCell: (params: CellParams) => (
                 <div>
                 {
-                    // need to fix this after the backend is connected, now it somehow stores array in string
+                    // TODO: need to fix this after the backend is connected, now it somehow stores array in string
                     params.value.toString().split(',').splice(0,maxTagShown).map((tag, index) => (
                         tag !== ""
                         ? index < maxTagShown-1
